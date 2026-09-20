@@ -505,6 +505,11 @@
             <h2>Bienvenido, <span id="userNameDisplay">Cliente</span> 👋</h2>
             <p style="color: #64748b;">Este es tu espacio exclusivo de beneficios y ofertas.</p>
           </div>
+          <!-- TARJETA DE REGALO / BENEFICIO PERSONALIZADO -->
+<div id="giftCard" style="background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); border: 2px solid #f59e0b; padding: 15px; border-radius: 12px; margin: 20px 0; text-align: center; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);">
+  <h4 style="margin: 0 0 8px 0; color: #92400e; font-size: 1.1rem;">🎁 Tu Regalo / Beneficio Exclusivo:</h4>
+  <p id="userGiftDisplay" style="margin: 0; color: #78350f; font-weight: bold; font-size: 1.1rem;">Cargando tu beneficio...</p>
+</div>
           <button class="btn-logout" onclick="handleLogout()">Cerrar Sesión</button>
         </div>
 
@@ -516,7 +521,49 @@
   </section>
 
 <!-- Librería oficial de Supabase para el navegador -->
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2">async function checkUserSession() {
+  const activeUser = JSON.parse(localStorage.getItem('sngas_active_session'));
+  const authBox = document.getElementById('authBox');
+  const userDashboard = document.getElementById('userDashboard');
+
+  if (activeUser) {
+    if (authBox) authBox.style.display = 'none';
+    if (userDashboard) userDashboard.style.display = 'block';
+    
+    const nameDisp = document.getElementById('userNameDisplay');
+    if (nameDisp) nameDisp.textContent = activeUser.nombre || activeUser.name;
+    
+    renderExclusive(exclusiveProducts);
+
+    // Consulta el regalo actualizado desde Supabase
+    if (supabaseClient && activeUser.id) {
+      const { data, error } = await supabaseClient
+        .from('usuarios')
+        .select('regalo')
+        .eq('id', activeUser.id)
+        .maybeSingle();
+
+      const giftDisplay = document.getElementById('userGiftDisplay');
+      if (giftDisplay) {
+        if (data && data.regalo) {
+          giftDisplay.textContent = data.regalo;
+        } else {
+          giftDisplay.textContent = '¡Bienvenido! Reclama tus promociones en estación.';
+        }
+      }
+    }
+
+    // Cargar la lista de administración si la función existe
+    if (typeof loadRegisteredUsers === 'function') {
+      loadRegisteredUsers();
+    }
+  } else {
+    if (authBox) authBox.style.display = 'block';
+    if (userDashboard) userDashboard.style.display = 'none';
+    toggleAuthForms('login');
+  }
+}</script>
+
 
 <script>
   // ==========================================
