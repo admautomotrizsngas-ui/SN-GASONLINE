@@ -502,6 +502,16 @@
       <div class="user-dashboard" id="userDashboard" style="display: none;">
         <div class="dashboard-header">
           <div>
+            <!-- RECUADRO DE MONEGAS ACUMULADAS -->
+<div id="monegasCard" style="background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); border: 2px solid #eab308; padding: 20px; border-radius: 12px; margin: 20px 0; color: white; text-align: center; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);">
+  <div style="font-size: 0.9rem; text-transform: uppercase; tracking: 1px; color: #cbd5e1;">Tu Saldo Acumulado</div>
+  <div style="font-size: 2.5rem; font-weight: bold; color: #eab308; margin: 8px 0;">
+    🪙 <span id="userMonegasDisplay">0</span> <span style="font-size: 1.2rem; color: #fef08a;">Monegas</span>
+  </div>
+  <p style="margin: 0; font-size: 0.85rem; color: #94a3b8;">
+    Acumula Monegas en cada servicio y canjéalas por descuentos en nuestro taller.
+  </p>
+</div>
             <h2>Bienvenido, <span id="userNameDisplay">Cliente</span> 👋</h2>
             <p style="color: #64748b;">Este es tu espacio exclusivo de beneficios y ofertas.</p>
           </div>
@@ -772,25 +782,30 @@ async function checkUserSession() {
     
     renderExclusive(exclusiveProducts);
 
-    // Consulta el regalo actualizado desde Supabase
+    // Consulta el saldo de Monegas y el Regalo desde Supabase
     if (supabaseClient && activeUser.id) {
       const { data, error } = await supabaseClient
         .from('usuarios')
-        .select('regalo')
+        .select('regalo, monegas')
         .eq('id', activeUser.id)
         .maybeSingle();
 
-      const giftDisplay = document.getElementById('userGiftDisplay');
-      if (giftDisplay) {
-        if (data && data.regalo) {
-          giftDisplay.textContent = data.regalo;
-        } else {
-          giftDisplay.textContent = '¡Bienvenido! Reclama tus promociones en estación.';
+      if (data) {
+        // Mostrar Monegas
+        const monegasDisp = document.getElementById('userMonegasDisplay');
+        if (monegasDisp) {
+          monegasDisp.textContent = data.monegas !== undefined && data.monegas !== null ? data.monegas : 0;
+        }
+
+        // Mostrar Regalo
+        const giftDisplay = document.getElementById('userGiftDisplay');
+        if (giftDisplay) {
+          giftDisplay.textContent = data.regalo || '¡Bienvenido! Reclama tus promociones en estación.';
         }
       }
     }
 
-    // Cargar la lista de administración si la función existe
+    // Cargar tabla de administración si existe
     if (typeof loadRegisteredUsers === 'function') {
       loadRegisteredUsers();
     }
