@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>SN'GAS ONLINE - Inicio, Tienda, Servicios y Cuenta</title>
@@ -341,10 +340,119 @@
     .dashboard-header {
       display: flex;
       justify-content: space-between;
-      align-items: center;
+      align-items: flex-start;
       border-bottom: 2px solid #f1f5f9;
-      padding-bottom: 1rem;
+      padding-bottom: 1.5rem;
       margin-bottom: 1.5rem;
+      gap: 1rem;
+    }
+
+    /* ESTILOS PARA TARJETAS DE MONEGAS Y REGALOS */
+    .rewards-wrapper {
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+      width: 100%;
+      margin: 20px 0;
+    }
+
+    .reward-card {
+      flex: 1;
+      min-width: 280px;
+      border-radius: 14px;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+      border: 1px solid rgba(0, 0, 0, 0.08);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .reward-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Tarjeta Monegas */
+    .monegas-card {
+      background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+      color: white;
+      border-left: 5px solid #eab308;
+    }
+
+    .monegas-card .reward-tag {
+      color: #fef08a;
+    }
+
+    /* Tarjeta Regalo */
+    .gift-card {
+      background: linear-gradient(135deg, #fffbebe6 0%, #fef3c7 100%);
+      color: #78350f;
+      border-left: 5px solid #f59e0b;
+    }
+
+    .gift-card .reward-tag {
+      color: #92400e;
+    }
+
+    /* Recuadros internos enmarcados */
+    .reward-inner-box {
+      margin: 14px 0 10px 0;
+      padding: 14px 16px;
+      border-radius: 10px;
+      text-align: center;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .monegas-box {
+      background: rgba(15, 23, 42, 0.6);
+      border: 2px solid #eab308;
+      font-size: 2.2rem;
+      font-weight: 800;
+      color: #eab308;
+      gap: 8px;
+    }
+
+    .monegas-box small {
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: #fde047;
+    }
+
+    .gift-box {
+      background: rgba(255, 255, 255, 0.85);
+      border: 2px dashed #f59e0b;
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: #854d0e;
+      line-height: 1.4;
+    }
+
+    .reward-header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .reward-icon {
+      font-size: 1.3rem;
+    }
+
+    .reward-tag {
+      font-size: 0.85rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .reward-footer-text {
+      font-size: 0.8rem;
+      opacity: 0.85;
+      margin-top: 8px;
+      line-height: 1.3;
     }
 
     .btn-logout {
@@ -371,6 +479,13 @@
       .filter-container {
         flex-direction: column;
         width: 100%;
+      }
+      .dashboard-header {
+        flex-direction: column;
+      }
+      .rewards-wrapper {
+        flex-direction: column;
+        gap: 12px;
       }
     }
   </style>
@@ -452,7 +567,7 @@
   <section id="accountSection" class="page-section">
     <div class="container">
       
-      <!-- FORMULARIO DE LOGIN / REGISTRO (Si no ha iniciado sesión) -->
+      <!-- FORMULARIO DE LOGIN / REGISTRO -->
       <div class="auth-container" id="authBox">
         
         <!-- Vista Registro -->
@@ -503,25 +618,48 @@
       <div class="user-dashboard" id="userDashboard" style="display: none;">
         <div class="dashboard-header">
           <div>
-            <!-- RECUADRO DE MONEGAS ACUMULADAS -->
-<div id="monegasCard" style="background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); border: 2px solid #eab308; padding: 20px; border-radius: 12px; margin: 20px 0; color: white; text-align: center; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);">
-  <div style="font-size: 0.9rem; text-transform: uppercase; tracking: 1px; color: #cbd5e1;">Tu Saldo Acumulado</div>
-  <div style="font-size: 2.5rem; font-weight: bold; color: #eab308; margin: 8px 0;">
-    🪙 <span id="userMonegasDisplay">0</span> <span style="font-size: 1.2rem; color: #fef08a;">Monegas</span>
-  </div>
-  <p style="margin: 0; font-size: 0.85rem; color: #94a3b8;">
-    Acumula Monegas en cada servicio y canjéalas por descuentos en nuestro taller.
-  </p>
-</div>
             <h2>Bienvenido, <span id="userNameDisplay">Cliente</span> 👋</h2>
             <p style="color: #64748b;">Este es tu espacio exclusivo de beneficios y ofertas.</p>
           </div>
-          <!-- TARJETA DE REGALO / BENEFICIO PERSONALIZADO -->
-<div id="giftCard" style="background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); border: 2px solid #f59e0b; padding: 15px; border-radius: 12px; margin: 20px 0; text-align: center; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);">
-  <h4 style="margin: 0 0 8px 0; color: #92400e; font-size: 1.1rem;">🎁 Tu Regalo / Beneficio Exclusivo:</h4>
-  <p id="userGiftDisplay" style="margin: 0; color: #78350f; font-weight: bold; font-size: 1.1rem;">Cargando tu beneficio...</p>
-</div>
           <button class="btn-logout" onclick="handleLogout()">Cerrar Sesión</button>
+        </div>
+
+        <!-- CONTENEDOR PRINCIPAL DE RECOMPENSAS (MONEGAS Y REGALOS) -->
+        <div class="rewards-wrapper">
+          
+          <!-- TARJETA 1: MONEGAS -->
+          <div class="reward-card monegas-card">
+            <div class="reward-header">
+              <span class="reward-icon">🪙</span>
+              <span class="reward-tag">Mi Saldo Acumulado</span>
+            </div>
+            <div class="reward-body">
+              <div class="reward-inner-box monegas-box">
+                <span id="userMonegasDisplay">0</span>
+                <small>Monegas</small>
+              </div>
+              <p class="reward-footer-text">
+                Acumula puntos en cada servicio y canjéalos por descuentos en nuestro taller.
+              </p>
+            </div>
+          </div>
+
+          <!-- TARJETA 2: BENEFICIO / REGALO -->
+          <div class="reward-card gift-card">
+            <div class="reward-header">
+              <span class="reward-icon">🎁</span>
+              <span class="reward-tag">Tu Beneficio Exclusivo</span>
+            </div>
+            <div class="reward-body">
+              <div class="reward-inner-box gift-box">
+                <span id="userGiftDisplay">Cargando tu beneficio...</span>
+              </div>
+              <p class="reward-footer-text">
+                Muestra este recuadro en caja para reclamar tu promoción.
+              </p>
+            </div>
+          </div>
+
         </div>
 
         <h3 class="exclusive-title">🎁 Productos Exclusivos para Socios</h3>
@@ -531,303 +669,302 @@
     </div>
   </section>
 
-<!-- Librería oficial de Supabase para el navegador -->
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <!-- Librería oficial de Supabase para el navegador -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
+  <script>
+    // ==========================================
+    // 1. CONFIGURACIÓN DE SUPABASE
+    // ==========================================
+    const SUPABASE_URL = 'https://pcpcbdraksmlobfrhrpk.supabase.co';
+    const SUPABASE_KEY = 'sb_publishable_atbLcWJhwhFwPC5JCS8qmA_YIRmRUas';
 
-<script>
-  // ==========================================
-  // 1. CONFIGURACIÓN DE SUPABASE
-  // ==========================================
-  const SUPABASE_URL = 'https://pcpcbdraksmlobfrhrpk.supabase.co';
-  const SUPABASE_KEY = 'sb_publishable_atbLcWJhwhFwPC5JCS8qmA_YIRmRUas';
-
-  // Inicialización correcta de Supabase para el navegador
-  let supabaseClient = null;
-  if (window.supabase && typeof window.supabase.createClient === 'function') {
-    supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-  } else {
-    console.error("No se pudo cargar la librería de Supabase.");
-  }
-
-  const whatsappNumber = "51999999999"; 
-
-  // ==========================================
-  // 2. CATÁLOGO Y DATOS
-  // ==========================================
-  const products = [
-    { id: 1, name: 'Gasolina Regular (90 Octanos)', category: ['Gasolina'], price: 16.50, image: 'https://picsum.photos/id/1070/300/200' },
-    { id: 2, name: 'Gasolina Premium (95 Octanos)', category: ['Gasolina'], price: 19.80, image: 'https://picsum.photos/id/1071/300/200' },
-    { id: 3, name: 'Carga GNV Estándar (m³)', category: ['GNV'], price: 1.75, image: 'https://picsum.photos/id/1072/300/200' },
-    { id: 4, name: 'Recarga GNV Alto Rendimiento', category: ['GNV'], price: 2.10, image: 'https://picsum.photos/id/1073/300/200' },
-    { id: 5, name: 'GLP Vehicular (Litro)', category: ['GLP'], price: 7.20, image: 'https://picsum.photos/id/1074/300/200' },
-    { id: 6, name: 'Balón GLP Doméstico 10kg', category: ['GLP'], price: 48.00, image: 'https://picsum.photos/id/1075/300/200' },
-    { id: 9, name: 'Filtro de Gas (GNV/GLP)', category: ['GNV', 'GLP'], price: 25.00, image: 'https://picsum.photos/id/1078/300/200' }
-  ];
-
-  const services = [
-    { id: 7, name: 'Cambio de Aceite + Filtro', category: ['Servicios'], price: 85.00, image: 'https://picsum.photos/id/1076/300/200' },
-    { id: 8, name: 'Lavado Premium y Encerado', category: ['Servicios'], price: 35.00, image: 'https://picsum.photos/id/1077/300/200' }
-  ];
-
-  const exclusiveProducts = [
-    { id: 10, name: 'Aditivo Limpiador de Inyectores GNV/GLP (Descuento VIP)', category: ['Exclusivo'], price: 18.00, image: 'https://picsum.photos/id/1079/300/200' },
-    { id: 11, name: 'Escaneo Electrónico Multimarca (Gratis por compra)', category: ['Exclusivo'], price: 0.00, image: 'https://picsum.photos/id/1080/300/200' },
-    { id: 12, name: 'Aceite Sintético 5W-30 Premium + Kit Filtros', category: ['Exclusivo'], price: 120.00, image: 'https://picsum.photos/id/1081/300/200' }
-  ];
-
-  // ==========================================
-  // 3. NAVEGACIÓN Y RENDERIZADO
-  // ==========================================
-  function showSection(sectionName) {
-    const sections = ['homeSection', 'shopSection', 'servicesSection', 'accountSection'];
-    const navs = ['nav-home', 'nav-shop', 'nav-services', 'nav-account'];
-    const shopFilters = document.getElementById('shopFilters');
-
-    sections.forEach(s => {
-      const el = document.getElementById(s);
-      if (el) el.classList.remove('active');
-    });
-
-    navs.forEach(n => {
-      const el = document.getElementById(n);
-      if (el) el.classList.remove('active');
-    });
-
-    if (sectionName === 'home') {
-      document.getElementById('homeSection').classList.add('active');
-      document.getElementById('nav-home').classList.add('active');
-      if (shopFilters) shopFilters.style.display = 'none';
-    } else if (sectionName === 'shop') {
-      document.getElementById('shopSection').classList.add('active');
-      document.getElementById('nav-shop').classList.add('active');
-      if (shopFilters) shopFilters.style.display = 'flex';
-    } else if (sectionName === 'services') {
-      document.getElementById('servicesSection').classList.add('active');
-      document.getElementById('nav-services').classList.add('active');
-      if (shopFilters) shopFilters.style.display = 'none';
-    } else if (sectionName === 'account') {
-      document.getElementById('accountSection').classList.add('active');
-      document.getElementById('nav-account').classList.add('active');
-      if (shopFilters) shopFilters.style.display = 'none';
-      checkUserSession();
-    }
-  }
-
-  function getBadgeClass(category) {
-    switch(category) {
-      case 'Gasolina': return 'badge-gasolina';
-      case 'GNV': return 'badge-gnv';
-      case 'GLP': return 'badge-glp';
-      case 'Servicios': return 'badge-servicios';
-      case 'Exclusivo': return 'badge-exclusivo';
-      default: return '';
-    }
-  }
-
-  function createCardHTML(item) {
-    const message = encodeURIComponent(`Hola, quiero solicitar/comprar: ${item.name} (Precio: S/ ${item.price.toFixed(2)})`);
-    const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${message}`;
-
-    const badgesHTML = item.category.map(cat => 
-      `<span class="product-badge ${getBadgeClass(cat)}">${cat}</span>`
-    ).join(' ');
-
-    return `
-      <div class="product-card">
-        <div>
-          <img src="${item.image}" alt="${item.name}" class="product-image">
-          <div class="badges-container">${badgesHTML}</div>
-          <div class="product-title">${item.name}</div>
-        </div>
-        <div>
-          <div class="product-price">S/ ${item.price.toFixed(2)}</div>
-          <a href="${whatsappUrl}" target="_blank" class="btn-whatsapp">
-            Solicitar por WhatsApp
-          </a>
-        </div>
-      </div>
-    `;
-  }
-
-  function renderProducts(items) {
-    const grid = document.getElementById('productsGrid');
-    if (!grid) return;
-    grid.innerHTML = items.length === 0 ? '<p style="grid-column: 1/-1; text-align: center; color: #64748b;">No se encontraron productos.</p>' : '';
-    items.forEach(p => grid.innerHTML += createCardHTML(p));
-  }
-
-  function renderServices(items) {
-    const grid = document.getElementById('servicesGrid');
-    if (!grid) return;
-    grid.innerHTML = '';
-    items.forEach(s => grid.innerHTML += createCardHTML(s));
-  }
-
-  function renderExclusive(items) {
-    const grid = document.getElementById('exclusiveGrid');
-    if (!grid) return;
-    grid.innerHTML = '';
-    items.forEach(e => grid.innerHTML += createCardHTML(e));
-  }
-
-  function filterProducts() {
-    const searchEl = document.getElementById('searchInput');
-    const catEl = document.getElementById('categorySelect');
-    if (!searchEl || !catEl) return;
-
-    const searchTerm = searchEl.value.toLowerCase();
-    const selectedCategory = catEl.value;
-
-    const filtered = products.filter(product => {
-      const matchesName = product.name.toLowerCase().includes(searchTerm);
-      const matchesCategory = selectedCategory === 'todas' || product.category.includes(selectedCategory);
-      return matchesName && matchesCategory;
-    });
-
-    renderProducts(filtered);
-  }
-
-  function toggleAuthForms(mode) {
-    const regForm = document.getElementById('registerForm');
-    const loginForm = document.getElementById('loginForm');
-    if (!regForm || !loginForm) return;
-
-    if (mode === 'login') {
-      regForm.style.display = 'none';
-      loginForm.style.display = 'block';
+    let supabaseClient = null;
+    if (window.supabase && typeof window.supabase.createClient === 'function') {
+      supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
     } else {
-      loginForm.style.display = 'none';
-      regForm.style.display = 'block';
-    }
-  }
-
-  // ==========================================
-  // 4. REGISTRO Y LOGIN EN LA NUBE (SUPABASE)
-  // ==========================================
-  async function handleRegister(e) {
-    e.preventDefault();
-    if (!supabaseClient) {
-      alert("Error: No se ha configurado la conexión a la base de datos.");
-      return;
+      console.error("No se pudo cargar la librería de Supabase.");
     }
 
-    const email = document.getElementById('regEmail').value.trim().toLowerCase();
-    const password = document.getElementById('regPassword').value.trim();
-    const name = document.getElementById('regName').value.trim();
-    const phone = document.getElementById('regPhone').value.trim();
+    const whatsappNumber = "51999999999"; 
 
-    const { data, error } = await supabaseClient
-      .from('usuarios')
-      .insert([{ nombre: name, email: email, telefono: phone, password: password }])
-      .select();
+    // ==========================================
+    // 2. CATÁLOGO Y DATOS
+    // ==========================================
+    const products = [
+      { id: 1, name: 'Gasolina Regular (90 Octanos)', category: ['Gasolina'], price: 16.50, image: 'https://picsum.photos/id/1070/300/200' },
+      { id: 2, name: 'Gasolina Premium (95 Octanos)', category: ['Gasolina'], price: 19.80, image: 'https://picsum.photos/id/1071/300/200' },
+      { id: 3, name: 'Carga GNV Estándar (m³)', category: ['GNV'], price: 1.75, image: 'https://picsum.photos/id/1072/300/200' },
+      { id: 4, name: 'Recarga GNV Alto Rendimiento', category: ['GNV'], price: 2.10, image: 'https://picsum.photos/id/1073/300/200' },
+      { id: 5, name: 'GLP Vehicular (Litro)', category: ['GLP'], price: 7.20, image: 'https://picsum.photos/id/1074/300/200' },
+      { id: 6, name: 'Balón GLP Doméstico 10kg', category: ['GLP'], price: 48.00, image: 'https://picsum.photos/id/1075/300/200' },
+      { id: 9, name: 'Filtro de Gas (GNV/GLP)', category: ['GNV', 'GLP'], price: 25.00, image: 'https://picsum.photos/id/1078/300/200' }
+    ];
 
-    if (error) {
-      if (error.code === '23505') {
-        alert('Este correo ya está registrado. Intenta iniciar sesión.');
-        toggleAuthForms('login');
-      } else {
-        alert('Error al registrar: ' + error.message);
+    const services = [
+      { id: 7, name: 'Cambio de Aceite + Filtro', category: ['Servicios'], price: 85.00, image: 'https://picsum.photos/id/1076/300/200' },
+      { id: 8, name: 'Lavado Premium y Encerado', category: ['Servicios'], price: 35.00, image: 'https://picsum.photos/id/1077/300/200' }
+    ];
+
+    const exclusiveProducts = [
+      { id: 10, name: 'Aditivo Limpiador de Inyectores GNV/GLP (Descuento VIP)', category: ['Exclusivo'], price: 18.00, image: 'https://picsum.photos/id/1079/300/200' },
+      { id: 11, name: 'Escaneo Electrónico Multimarca (Gratis por compra)', category: ['Exclusivo'], price: 0.00, image: 'https://picsum.photos/id/1080/300/200' },
+      { id: 12, name: 'Aceite Sintético 5W-30 Premium + Kit Filtros', category: ['Exclusivo'], price: 120.00, image: 'https://picsum.photos/id/1081/300/200' }
+    ];
+
+    // ==========================================
+    // 3. NAVEGACIÓN Y RENDERIZADO
+    // ==========================================
+    function showSection(sectionName) {
+      const sections = ['homeSection', 'shopSection', 'servicesSection', 'accountSection'];
+      const navs = ['nav-home', 'nav-shop', 'nav-services', 'nav-account'];
+      const shopFilters = document.getElementById('shopFilters');
+
+      sections.forEach(s => {
+        const el = document.getElementById(s);
+        if (el) el.classList.remove('active');
+      });
+
+      navs.forEach(n => {
+        const el = document.getElementById(n);
+        if (el) el.classList.remove('active');
+      });
+
+      if (sectionName === 'home') {
+        document.getElementById('homeSection').classList.add('active');
+        document.getElementById('nav-home').classList.add('active');
+        if (shopFilters) shopFilters.style.display = 'none';
+      } else if (sectionName === 'shop') {
+        document.getElementById('shopSection').classList.add('active');
+        document.getElementById('nav-shop').classList.add('active');
+        if (shopFilters) shopFilters.style.display = 'flex';
+      } else if (sectionName === 'services') {
+        document.getElementById('servicesSection').classList.add('active');
+        document.getElementById('nav-services').classList.add('active');
+        if (shopFilters) shopFilters.style.display = 'none';
+      } else if (sectionName === 'account') {
+        document.getElementById('accountSection').classList.add('active');
+        document.getElementById('nav-account').classList.add('active');
+        if (shopFilters) shopFilters.style.display = 'none';
+        checkUserSession();
       }
-      return;
     }
 
-    const newUser = data[0];
-    localStorage.setItem('sngas_active_session', JSON.stringify(newUser));
-    alert('¡Registro exitoso en la nube! Bienvenido.');
-    checkUserSession();
-  }
-
-  async function handleLogin(e) {
-    e.preventDefault();
-    if (!supabaseClient) {
-      alert("Error: No se ha configurado la conexión a la base de datos.");
-      return;
+    function getBadgeClass(category) {
+      switch(category) {
+        case 'Gasolina': return 'badge-gasolina';
+        case 'GNV': return 'badge-gnv';
+        case 'GLP': return 'badge-glp';
+        case 'Servicios': return 'badge-servicios';
+        case 'Exclusivo': return 'badge-exclusivo';
+        default: return '';
+      }
     }
 
-    const email = document.getElementById('loginEmail').value.trim().toLowerCase();
-    const pass = document.getElementById('loginPassword').value.trim();
+    function createCardHTML(item) {
+      const message = encodeURIComponent(`Hola, quiero solicitar/comprar: ${item.name} (Precio: S/ ${item.price.toFixed(2)})`);
+      const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${message}`;
 
-    const { data, error } = await supabaseClient
-      .from('usuarios')
-      .select('*')
-      .eq('email', email)
-      .eq('password', pass)
-      .maybeSingle();
+      const badgesHTML = item.category.map(cat => 
+        `<span class="product-badge ${getBadgeClass(cat)}">${cat}</span>`
+      ).join(' ');
 
-    if (data) {
-      localStorage.setItem('sngas_active_session', JSON.stringify(data));
-      alert('¡Bienvenido de nuevo!');
-      checkUserSession();
-    } else {
-      alert('Correo o contraseña incorrectos.');
+      return `
+        <div class="product-card">
+          <div>
+            <img src="${item.image}" alt="${item.name}" class="product-image">
+            <div class="badges-container">${badgesHTML}</div>
+            <div class="product-title">${item.name}</div>
+          </div>
+          <div>
+            <div class="product-price">S/ ${item.price.toFixed(2)}</div>
+            <a href="${whatsappUrl}" target="_blank" class="btn-whatsapp">
+              Solicitar por WhatsApp
+            </a>
+          </div>
+        </div>
+      `;
     }
-  }
 
-  function handleLogout() {
-    localStorage.removeItem('sngas_active_session');
-    checkUserSession();
-  }
+    function renderProducts(items) {
+      const grid = document.getElementById('productsGrid');
+      if (!grid) return;
+      grid.innerHTML = items.length === 0 ? '<p style="grid-column: 1/-1; text-align: center; color: #64748b;">No se encontraron productos.</p>' : '';
+      items.forEach(p => grid.innerHTML += createCardHTML(p));
+    }
 
-async function checkUserSession() {
-  const activeUser = JSON.parse(localStorage.getItem('sngas_active_session'));
-  const authBox = document.getElementById('authBox');
-  const userDashboard = document.getElementById('userDashboard');
+    function renderServices(items) {
+      const grid = document.getElementById('servicesGrid');
+      if (!grid) return;
+      grid.innerHTML = '';
+      items.forEach(s => grid.innerHTML += createCardHTML(s));
+    }
 
-  if (activeUser) {
-    if (authBox) authBox.style.display = 'none';
-    if (userDashboard) userDashboard.style.display = 'block';
-    
-    const nameDisp = document.getElementById('userNameDisplay');
-    if (nameDisp) nameDisp.textContent = activeUser.nombre || activeUser.name;
-    
-    renderExclusive(exclusiveProducts);
+    function renderExclusive(items) {
+      const grid = document.getElementById('exclusiveGrid');
+      if (!grid) return;
+      grid.innerHTML = '';
+      items.forEach(e => grid.innerHTML += createCardHTML(e));
+    }
 
-    // Consulta el saldo de Monegas y el Regalo desde Supabase
-    if (supabaseClient && activeUser.id) {
+    function filterProducts() {
+      const searchEl = document.getElementById('searchInput');
+      const catEl = document.getElementById('categorySelect');
+      if (!searchEl || !catEl) return;
+
+      const searchTerm = searchEl.value.toLowerCase();
+      const selectedCategory = catEl.value;
+
+      const filtered = products.filter(product => {
+        const matchesName = product.name.toLowerCase().includes(searchTerm);
+        const matchesCategory = selectedCategory === 'todas' || product.category.includes(selectedCategory);
+        return matchesName && matchesCategory;
+      });
+
+      renderProducts(filtered);
+    }
+
+    function toggleAuthForms(mode) {
+      const regForm = document.getElementById('registerForm');
+      const loginForm = document.getElementById('loginForm');
+      if (!regForm || !loginForm) return;
+
+      if (mode === 'login') {
+        regForm.style.display = 'none';
+        loginForm.style.display = 'block';
+      } else {
+        loginForm.style.display = 'none';
+        regForm.style.display = 'block';
+      }
+    }
+
+    // ==========================================
+    // 4. REGISTRO Y LOGIN EN LA NUBE (SUPABASE)
+    // ==========================================
+    async function handleRegister(e) {
+      e.preventDefault();
+      if (!supabaseClient) {
+        alert("Error: No se ha configurado la conexión a la base de datos.");
+        return;
+      }
+
+      const email = document.getElementById('regEmail').value.trim().toLowerCase();
+      const password = document.getElementById('regPassword').value.trim();
+      const name = document.getElementById('regName').value.trim();
+      const phone = document.getElementById('regPhone').value.trim();
+
       const { data, error } = await supabaseClient
         .from('usuarios')
-        .select('regalo, monegas')
-        .eq('id', activeUser.id)
+        .insert([{ nombre: name, email: email, telefono: phone, password: password }])
+        .select();
+
+      if (error) {
+        if (error.code === '23505') {
+          alert('Este correo ya está registrado. Intenta iniciar sesión.');
+          toggleAuthForms('login');
+        } else {
+          alert('Error al registrar: ' + error.message);
+        }
+        return;
+      }
+
+      const newUser = data[0];
+      localStorage.setItem('sngas_active_session', JSON.stringify(newUser));
+      alert('¡Registro exitoso en la nube! Bienvenido.');
+      checkUserSession();
+    }
+
+    async function handleLogin(e) {
+      e.preventDefault();
+      if (!supabaseClient) {
+        alert("Error: No se ha configurado la conexión a la base de datos.");
+        return;
+      }
+
+      const email = document.getElementById('loginEmail').value.trim().toLowerCase();
+      const pass = document.getElementById('loginPassword').value.trim();
+
+      const { data, error } = await supabaseClient
+        .from('usuarios')
+        .select('*')
+        .eq('email', email)
+        .eq('password', pass)
         .maybeSingle();
 
       if (data) {
-        // Mostrar Monegas
-        const monegasDisp = document.getElementById('userMonegasDisplay');
-        if (monegasDisp) {
-          monegasDisp.textContent = data.monegas !== undefined && data.monegas !== null ? data.monegas : 0;
-        }
-
-        // Mostrar Regalo
-        const giftDisplay = document.getElementById('userGiftDisplay');
-        if (giftDisplay) {
-          giftDisplay.textContent = data.regalo || '¡Bienvenido! Reclama tus promociones en estación.';
-        }
+        localStorage.setItem('sngas_active_session', JSON.stringify(data));
+        alert('¡Bienvenido de nuevo!');
+        checkUserSession();
+      } else {
+        alert('Correo o contraseña incorrectos.');
       }
     }
 
-    // Cargar tabla de administración si existe
-    if (typeof loadRegisteredUsers === 'function') {
-      loadRegisteredUsers();
+    function handleLogout() {
+      localStorage.removeItem('sngas_active_session');
+      checkUserSession();
     }
-  } else {
-    if (authBox) authBox.style.display = 'block';
-    if (userDashboard) userDashboard.style.display = 'none';
-    toggleAuthForms('login');
-  }
-}
 
-  // ==========================================
-  // 5. INICIALIZACIÓN DE EVENTOS
-  // ==========================================
-  document.addEventListener('DOMContentLoaded', () => {
-    const searchInput = document.getElementById('searchInput');
-    const categorySelect = document.getElementById('categorySelect');
+    async function checkUserSession() {
+      const activeUser = JSON.parse(localStorage.getItem('sngas_active_session'));
+      const authBox = document.getElementById('authBox');
+      const userDashboard = document.getElementById('userDashboard');
 
-    if (searchInput) searchInput.addEventListener('input', filterProducts);
-    if (categorySelect) categorySelect.addEventListener('change', filterProducts);
+      if (activeUser) {
+        if (authBox) authBox.style.display = 'none';
+        if (userDashboard) userDashboard.style.display = 'block';
+        
+        const nameDisp = document.getElementById('userNameDisplay');
+        if (nameDisp) nameDisp.textContent = activeUser.nombre || activeUser.name;
+        
+        renderExclusive(exclusiveProducts);
 
-    renderProducts(products);
-    renderServices(services);
-  });
-</script>
+        // Consulta el saldo de Monegas y el Regalo desde Supabase
+        if (supabaseClient && activeUser.id) {
+          const { data, error } = await supabaseClient
+            .from('usuarios')
+            .select('regalo, monegas')
+            .eq('id', activeUser.id)
+            .maybeSingle();
+
+          if (data) {
+            // Mostrar Monegas
+            const monegasDisp = document.getElementById('userMonegasDisplay');
+            if (monegasDisp) {
+              monegasDisp.textContent = data.monegas !== undefined && data.monegas !== null ? data.monegas : 0;
+            }
+
+            // Mostrar Regalo
+            const giftDisplay = document.getElementById('userGiftDisplay');
+            if (giftDisplay) {
+              giftDisplay.textContent = data.regalo || '¡Bienvenido! Reclama tus promociones en estación.';
+            }
+          }
+        }
+
+        if (typeof loadRegisteredUsers === 'function') {
+          loadRegisteredUsers();
+        }
+      } else {
+        if (authBox) authBox.style.display = 'block';
+        if (userDashboard) userDashboard.style.display = 'none';
+        toggleAuthForms('login');
+      }
+    }
+
+    // ==========================================
+    // 5. INICIALIZACIÓN DE EVENTOS
+    // ==========================================
+    document.addEventListener('DOMContentLoaded', () => {
+      const searchInput = document.getElementById('searchInput');
+      const categorySelect = document.getElementById('categorySelect');
+
+      if (searchInput) searchInput.addEventListener('input', filterProducts);
+      if (categorySelect) categorySelect.addEventListener('change', filterProducts);
+
+      renderProducts(products);
+      renderServices(services);
+    });
+  </script>
+</body>
+</html>
