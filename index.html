@@ -348,6 +348,33 @@
       gap: 1rem;
     }
 
+    .user-greeting-container {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .btn-vip-whatsapp {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background-color: #25d366;
+      color: white;
+      text-decoration: none;
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-size: 0.85rem;
+      font-weight: bold;
+      box-shadow: 0 2px 6px rgba(37, 211, 102, 0.3);
+      transition: transform 0.2s, background-color 0.2s;
+    }
+
+    .btn-vip-whatsapp:hover {
+      background-color: #1da851;
+      transform: scale(1.03);
+    }
+
     /* ESTILOS PARA TARJETAS DE MONEGAS Y REGALOS */
     .rewards-wrapper {
       display: flex;
@@ -632,7 +659,13 @@
       <div class="user-dashboard" id="userDashboard" style="display: none;">
         <div class="dashboard-header">
           <div>
-            <h2>Bienvenido, <span id="userNameDisplay">Cliente</span> 👋</h2>
+            <div class="user-greeting-container">
+              <h2>Bienvenido, <span id="userNameDisplay">Cliente</span> 👋</h2>
+              <!-- ENLACE DE WHATSAPP VIP (Solo visible si la suscripción está activa) -->
+              <a id="vipWhatsappLink" href="#" target="_blank" class="btn-vip-whatsapp" style="display: none;">
+                💬 Soporte VIP WhatsApp
+              </a>
+            </div>
             <p style="color: #64748b;">Este es tu espacio exclusivo de beneficios y ofertas.</p>
           </div>
           <button class="btn-logout" onclick="handleLogout()">Cerrar Sesión</button>
@@ -716,7 +749,7 @@
       console.error("No se pudo cargar la librería de Supabase.");
     }
 
-    const whatsappNumber = "51954233670"; 
+    const whatsappNumber = "51999999999"; 
 
     // ==========================================
     // 2. CATÁLOGO Y DATOS
@@ -983,6 +1016,8 @@
       const activeUser = JSON.parse(localStorage.getItem('sngas_active_session'));
       const authBox = document.getElementById('authBox');
       const userDashboard = document.getElementById('userDashboard');
+      const exclusiveTitle = document.querySelector('.exclusive-title');
+      const exclusiveGrid = document.getElementById('exclusiveGrid');
 
       if (activeUser) {
         if (authBox) authBox.style.display = 'none';
@@ -990,8 +1025,6 @@
         
         const nameDisp = document.getElementById('userNameDisplay');
         if (nameDisp) nameDisp.textContent = activeUser.nombre || activeUser.name;
-        
-        renderExclusive(exclusiveProducts);
 
         // Consulta Monegas, Regalo y Estado de Membresía desde Supabase
         if (supabaseClient && activeUser.id) {
@@ -1014,25 +1047,55 @@
               giftDisplay.textContent = data.regalo || '¡Bienvenido! Reclama tus promociones en estación.';
             }
 
-            // Actualizar vista de Membresía VIP
+            // Elementos UI de la Membresía VIP
             const subBtn = document.getElementById('btnSubscribe');
             const subText = document.getElementById('subscriptionStatusText');
+            const vipWhatsappLink = document.getElementById('vipWhatsappLink');
 
+            // VERIFICACIÓN DE SUSCRIPCIÓN AL DÍA
             if (data.membresia_activa) {
+              // 1. Mostrar productos exclusivos
+              if (exclusiveTitle) exclusiveTitle.style.display = 'block';
+              if (exclusiveGrid) exclusiveGrid.style.display = 'grid';
+              renderExclusive(exclusiveProducts);
+
+              // 2. Actualizar botón VIP y texto
               if (subBtn) {
                 subBtn.textContent = '✓ Membresía VIP Activa (Contactar Soporte)';
                 subBtn.style.backgroundColor = '#16a34a';
               }
               if (subText) {
-                subText.innerHTML = '🌟 <strong>¡Tu Membresía VIP está ACTIVA!</strong> Tienes acceso a auxilio mecánico nocturno y beneficios exclusivos.';
+                subText.innerHTML = '🌟 <strong>¡Tu Membresía VIP está ACTIVA!</strong> Tienes acceso a auxilio mecánico nocturno y catálogo exclusivo.';
               }
+
+              // 3. Mostrar botón de WhatsApp VIP
+              if (vipWhatsappLink) {
+                const msgVIP = encodeURIComponent(`Hola, soy socio VIP (${activeUser.nombre || ''}). Requiero atención / auxilio mecánico.`);
+                vipWhatsappLink.href = `https://wa.me/${whatsappNumber}?text=${msgVIP}`;
+                vipWhatsappLink.style.display = 'inline-flex';
+              }
+
             } else {
+              // SI NO ESTÁ AL DÍA / SUSCRIPCIÓN INACTIVA:
+              // 1. Ocultar totalmente la lista y el título de productos exclusivos
+              if (exclusiveTitle) exclusiveTitle.style.display = 'none';
+              if (exclusiveGrid) {
+                exclusiveGrid.style.display = 'none';
+                exclusiveGrid.innerHTML = '';
+              }
+
+              // 2. Restaurar botón de suscripción
               if (subBtn) {
                 subBtn.textContent = 'Activar Membresía VIP';
                 subBtn.style.backgroundColor = '#a855f7';
               }
               if (subText) {
-                subText.textContent = 'Obtén acceso preferencial a auxilio mecánico nocturno, prioridad en atención de taller y promociones exclusivas.';
+                subText.textContent = 'Obtén acceso preferencial a auxilio mecánico nocturno, prioridad en atención de taller y catálogo de ofertas exclusivas.';
+              }
+
+              // 3. Ocultar enlace de WhatsApp VIP
+              if (vipWhatsappLink) {
+                vipWhatsappLink.style.display = 'none';
               }
             }
           }
