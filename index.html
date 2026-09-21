@@ -661,7 +661,7 @@
           <div>
             <div class="user-greeting-container">
               <h2>Bienvenido, <span id="userNameDisplay">Cliente</span> 👋</h2>
-              <!-- ENLACE DE WHATSAPP VIP (Solo visible si la suscripción está activa) -->
+              <!-- ENLACE DE WHATSAPP VIP (Solo visible si la suscripción está activa en Supabase) -->
               <a id="vipWhatsappLink" href="#" target="_blank" class="btn-vip-whatsapp" style="display: none;">
                 💬 Soporte VIP WhatsApp
               </a>
@@ -682,7 +682,7 @@
               Obtén acceso preferencial a auxilio mecánico nocturno, prioridad en atención de taller y promociones exclusivas.
             </p>
             <button id="btnSubscribe" onclick="handleSubscription()" class="btn-submit" style="background-color: #a855f7; margin-top: 12px;">
-              Activar Membresía VIP
+              Solicitar / Renovar Membresía VIP
             </button>
           </div>
         </div>
@@ -725,8 +725,8 @@
 
         </div>
 
-        <h3 class="exclusive-title">🎁 Productos Exclusivos para Socios</h3>
-        <main class="products-grid" id="exclusiveGrid"></main>
+        <h3 class="exclusive-title" style="display: none;">🎁 Productos Exclusivos para Socios</h3>
+        <main class="products-grid" id="exclusiveGrid" style="display: none;"></main>
       </div>
 
     </div>
@@ -750,6 +750,9 @@
     }
 
     const whatsappNumber = "51999999999"; 
+
+    // Estado local de la membresía (Se sincroniza ÚNICAMENTE desde Supabase)
+    let isUserVipActive = false;
 
     // ==========================================
     // 2. CATÁLOGO Y DATOS
@@ -902,7 +905,7 @@
     }
 
     // ==========================================
-    // 4. REGISTRO, LOGIN Y SUSCRIPCIÓN EN SUPABASE
+    // 4. REGISTRO Y LOGIN EN SUPABASE
     // ==========================================
     async function handleRegister(e) {
       e.preventDefault();
@@ -968,50 +971,27 @@
       checkUserSession();
     }
 
-    // LÓGICA DE SUSCRIPCIÓN A LA MEMBRESÍA VIP
-    async function handleSubscription() {
+    // ACCIÓN DEL BOTÓN MEMBRESÍA (SÓLO ABRE WHATSAPP - NO MODIFICA LA BASE DE DATOS)
+    function handleSubscription() {
       const activeUser = JSON.parse(localStorage.getItem('sngas_active_session'));
 
       if (!activeUser) {
-        alert("Debes iniciar sesión para suscribirte.");
+        alert("Debes iniciar sesión primero.");
         showSection('account');
         return;
       }
 
-      if (!supabaseClient) {
-        alert("Error de conexión a la base de datos.");
-        return;
+      let textMsg = "";
+      if (isUserVipActive) {
+        textMsg = encodeURIComponent(`¡Hola! Soy socio VIP (${activeUser.nombre || ''}). Requiero soporte / auxilio mecánico.`);
+      } else {
+        textMsg = encodeURIComponent(`¡Hola! Deseo coordinar el pago / renovación de mi Membresía VIP SN'GAS.\n\nNombre: ${activeUser.nombre || ''}\nCorreo: ${activeUser.email}`);
       }
 
-      const confirmSub = confirm("¿Deseas solicitar la activación de tu Membresía VIP SN'GAS?");
-      if (!confirmSub) return;
-
-      // 1. Actualizamos el estado en Supabase
-      const { data, error } = await supabaseClient
-        .from('usuarios')
-        .update({ 
-          membresia_activa: true, 
-          tipo_membresia: 'Socio VIP SN\'GAS' 
-        })
-        .eq('id', activeUser.id)
-        .select();
-
-      if (error) {
-        alert('Error al procesar la suscripción: ' + error.message);
-        return;
-      }
-
-      // 2. Notificamos al usuario
-      alert("¡Membresía registrada! Te redirigiremos a WhatsApp para confirmar los detalles.");
-      
-      // 3. Abrimos WhatsApp
-      const textMsg = encodeURIComponent(`¡Hola! Solicito la activación de mi Membresía VIP SN'GAS.\n\nNombre: ${activeUser.nombre || ''}\nCorreo: ${activeUser.email}`);
       window.open(`https://wa.me/${whatsappNumber}?text=${textMsg}`, '_blank');
-
-      // 4. Actualizamos el estado de la sesión
-      checkUserSession();
     }
 
+    // CONSULTA ESTADO EN TIEMPO REAL DESDE SUPABASE
     async function checkUserSession() {
       const activeUser = JSON.parse(localStorage.getItem('sngas_active_session'));
       const authBox = document.getElementById('authBox');
@@ -1026,8 +1006,8 @@
         const nameDisp = document.getElementById('userNameDisplay');
         if (nameDisp) nameDisp.textContent = activeUser.nombre || activeUser.name;
 
-        // Consulta Monegas, Regalo y Estado de Membresía desde Supabase
         if (supabaseClient && activeUser.id) {
+          // Consultamos siempre el estado actual en la base de datos
           const { data, error } = await supabaseClient
             .from('usuarios')
             .select('regalo, monegas, membresia_activa, tipo_membresia')
@@ -1035,6 +1015,9 @@
             .maybeSingle();
 
           if (data) {
+            // Evaluamos rigurosamente si está activo (debe ser explícitamente true)
+            isUserVipActive = data.membresia_activa === true;
+
             // Mostrar Monegas
             const monegasDisp = document.getElementById('userMonegasDisplay');
             if (monegasDisp) {
@@ -1052,14 +1035,12 @@
             const subText = document.getElementById('subscriptionStatusText');
             const vipWhatsappLink = document.getElementById('vipWhatsappLink');
 
-            // VERIFICACIÓN DE SUSCRIPCIÓN AL DÍA
-            if (data.membresia_activa) {
-              // 1. Mostrar productos exclusivos
+            if (isUserVipActive) {
+              // CLIENTE ACTIVO EN BD (true):
               if (exclusiveTitle) exclusiveTitle.style.display = 'block';
               if (exclusiveGrid) exclusiveGrid.style.display = 'grid';
               renderExclusive(exclusiveProducts);
 
-              // 2. Actualizar botón VIP y texto
               if (subBtn) {
                 subBtn.textContent = '✓ Membresía VIP Activa (Contactar Soporte)';
                 subBtn.style.backgroundColor = '#16a34a';
@@ -1068,7 +1049,6 @@
                 subText.innerHTML = '🌟 <strong>¡Tu Membresía VIP está ACTIVA!</strong> Tienes acceso a auxilio mecánico nocturno y catálogo exclusivo.';
               }
 
-              // 3. Mostrar botón de WhatsApp VIP
               if (vipWhatsappLink) {
                 const msgVIP = encodeURIComponent(`Hola, soy socio VIP (${activeUser.nombre || ''}). Requiero atención / auxilio mecánico.`);
                 vipWhatsappLink.href = `https://wa.me/${whatsappNumber}?text=${msgVIP}`;
@@ -1076,24 +1056,21 @@
               }
 
             } else {
-              // SI NO ESTÁ AL DÍA / SUSCRIPCIÓN INACTIVA:
-              // 1. Ocultar totalmente la lista y el título de productos exclusivos
+              // CLIENTE DESACTIVADO EN BD (false):
               if (exclusiveTitle) exclusiveTitle.style.display = 'none';
               if (exclusiveGrid) {
                 exclusiveGrid.style.display = 'none';
                 exclusiveGrid.innerHTML = '';
               }
 
-              // 2. Restaurar botón de suscripción
               if (subBtn) {
-                subBtn.textContent = 'Activar Membresía VIP';
+                subBtn.textContent = 'Solicitar / Renovar Membresía VIP';
                 subBtn.style.backgroundColor = '#a855f7';
               }
               if (subText) {
-                subText.textContent = 'Obtén acceso preferencial a auxilio mecánico nocturno, prioridad en atención de taller y catálogo de ofertas exclusivas.';
+                subText.textContent = 'Tu membresía no está activa. Para acceder al catálogo exclusivo y auxilio nocturno, ponte al día con tu pago.';
               }
 
-              // 3. Ocultar enlace de WhatsApp VIP
               if (vipWhatsappLink) {
                 vipWhatsappLink.style.display = 'none';
               }
