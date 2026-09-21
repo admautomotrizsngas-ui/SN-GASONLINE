@@ -310,6 +310,7 @@
       font-weight: bold;
       cursor: pointer;
       margin-top: 0.5rem;
+      transition: background-color 0.2s;
     }
 
     .btn-submit:hover {
@@ -396,6 +397,19 @@
       color: #92400e;
     }
 
+    /* Tarjeta Membresía VIP */
+    .vip-card {
+      background: linear-gradient(135deg, #1e1b4b 0%, #312e81 100%);
+      color: white;
+      border-left: 5px solid #a855f7;
+      width: 100%;
+      margin-bottom: 25px;
+    }
+
+    .vip-card .reward-tag {
+      color: #c084fc;
+    }
+
     /* Recuadros internos enmarcados */
     .reward-inner-box {
       margin: 14px 0 10px 0;
@@ -449,10 +463,10 @@
     }
 
     .reward-footer-text {
-      font-size: 0.8rem;
-      opacity: 0.85;
+      font-size: 0.85rem;
+      opacity: 0.9;
       margin-top: 8px;
-      line-height: 1.3;
+      line-height: 1.4;
     }
 
     .btn-logout {
@@ -624,6 +638,22 @@
           <button class="btn-logout" onclick="handleLogout()">Cerrar Sesión</button>
         </div>
 
+        <!-- TARJETA DE MEMBRESÍA VIP SN'GAS -->
+        <div class="reward-card vip-card">
+          <div class="reward-header">
+            <span class="reward-icon">⭐</span>
+            <span class="reward-tag">Membresía SN'GAS VIP</span>
+          </div>
+          <div class="reward-body">
+            <p id="subscriptionStatusText" class="reward-footer-text">
+              Obtén acceso preferencial a auxilio mecánico nocturno, prioridad en atención de taller y promociones exclusivas.
+            </p>
+            <button id="btnSubscribe" onclick="handleSubscription()" class="btn-submit" style="background-color: #a855f7; margin-top: 12px;">
+              Activar Membresía VIP
+            </button>
+          </div>
+        </div>
+
         <!-- CONTENEDOR PRINCIPAL DE RECOMPENSAS (MONEGAS Y REGALOS) -->
         <div class="rewards-wrapper">
           
@@ -686,7 +716,7 @@
       console.error("No se pudo cargar la librería de Supabase.");
     }
 
-    const whatsappNumber = "51999999999"; 
+    const whatsappNumber = "51954233670"; 
 
     // ==========================================
     // 2. CATÁLOGO Y DATOS
@@ -707,8 +737,8 @@
     ];
 
     const exclusiveProducts = [
-      { id: 10, name: 'Scaneo Gratuito', category: ['Exclusivo'], price: 0.00, image: 'file:///C:/Users/Usuario/Desktop/Gemini_Generated_Image_5v67sj5v67sj5v67.jfif' },
-      { id: 11, name: 'Regulacion Gratis', category: ['Exclusivo'], price: 0.00, image: 'file:///C:/Users/Usuario/Desktop/Gemini_Generated_Image_g4uxvog4uxvog4ux.jfif' },
+      { id: 10, name: 'Revisión con Escáner', category: ['Exclusivo'], price: 18.00, image: 'https://picsum.photos/id/1079/300/200' },
+      { id: 11, name: 'Escaneo Electrónico Multimarca (Gratis por compra)', category: ['Exclusivo'], price: 0.00, image: 'https://picsum.photos/id/1080/300/200' },
       { id: 12, name: 'Aceite Sintético 5W-30 Premium + Kit Filtros', category: ['Exclusivo'], price: 120.00, image: 'https://picsum.photos/id/1081/300/200' }
     ];
 
@@ -839,7 +869,7 @@
     }
 
     // ==========================================
-    // 4. REGISTRO Y LOGIN EN LA NUBE (SUPABASE)
+    // 4. REGISTRO, LOGIN Y SUSCRIPCIÓN EN SUPABASE
     // ==========================================
     async function handleRegister(e) {
       e.preventDefault();
@@ -905,6 +935,50 @@
       checkUserSession();
     }
 
+    // LÓGICA DE SUSCRIPCIÓN A LA MEMBRESÍA VIP
+    async function handleSubscription() {
+      const activeUser = JSON.parse(localStorage.getItem('sngas_active_session'));
+
+      if (!activeUser) {
+        alert("Debes iniciar sesión para suscribirte.");
+        showSection('account');
+        return;
+      }
+
+      if (!supabaseClient) {
+        alert("Error de conexión a la base de datos.");
+        return;
+      }
+
+      const confirmSub = confirm("¿Deseas solicitar la activación de tu Membresía VIP SN'GAS?");
+      if (!confirmSub) return;
+
+      // 1. Actualizamos el estado en Supabase
+      const { data, error } = await supabaseClient
+        .from('usuarios')
+        .update({ 
+          membresia_activa: true, 
+          tipo_membresia: 'Socio VIP SN\'GAS' 
+        })
+        .eq('id', activeUser.id)
+        .select();
+
+      if (error) {
+        alert('Error al procesar la suscripción: ' + error.message);
+        return;
+      }
+
+      // 2. Notificamos al usuario
+      alert("¡Membresía registrada! Te redirigiremos a WhatsApp para confirmar los detalles.");
+      
+      // 3. Abrimos WhatsApp
+      const textMsg = encodeURIComponent(`¡Hola! Solicito la activación de mi Membresía VIP SN'GAS.\n\nNombre: ${activeUser.nombre || ''}\nCorreo: ${activeUser.email}`);
+      window.open(`https://wa.me/${whatsappNumber}?text=${textMsg}`, '_blank');
+
+      // 4. Actualizamos el estado de la sesión
+      checkUserSession();
+    }
+
     async function checkUserSession() {
       const activeUser = JSON.parse(localStorage.getItem('sngas_active_session'));
       const authBox = document.getElementById('authBox');
@@ -919,11 +993,11 @@
         
         renderExclusive(exclusiveProducts);
 
-        // Consulta el saldo de Monegas y el Regalo desde Supabase
+        // Consulta Monegas, Regalo y Estado de Membresía desde Supabase
         if (supabaseClient && activeUser.id) {
           const { data, error } = await supabaseClient
             .from('usuarios')
-            .select('regalo, monegas')
+            .select('regalo, monegas, membresia_activa, tipo_membresia')
             .eq('id', activeUser.id)
             .maybeSingle();
 
@@ -939,11 +1013,29 @@
             if (giftDisplay) {
               giftDisplay.textContent = data.regalo || '¡Bienvenido! Reclama tus promociones en estación.';
             }
-          }
-        }
 
-        if (typeof loadRegisteredUsers === 'function') {
-          loadRegisteredUsers();
+            // Actualizar vista de Membresía VIP
+            const subBtn = document.getElementById('btnSubscribe');
+            const subText = document.getElementById('subscriptionStatusText');
+
+            if (data.membresia_activa) {
+              if (subBtn) {
+                subBtn.textContent = '✓ Membresía VIP Activa (Contactar Soporte)';
+                subBtn.style.backgroundColor = '#16a34a';
+              }
+              if (subText) {
+                subText.innerHTML = '🌟 <strong>¡Tu Membresía VIP está ACTIVA!</strong> Tienes acceso a auxilio mecánico nocturno y beneficios exclusivos.';
+              }
+            } else {
+              if (subBtn) {
+                subBtn.textContent = 'Activar Membresía VIP';
+                subBtn.style.backgroundColor = '#a855f7';
+              }
+              if (subText) {
+                subText.textContent = 'Obtén acceso preferencial a auxilio mecánico nocturno, prioridad en atención de taller y promociones exclusivas.';
+              }
+            }
+          }
         }
       } else {
         if (authBox) authBox.style.display = 'block';
