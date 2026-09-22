@@ -355,6 +355,35 @@
       flex-wrap: wrap;
     }
 
+    /* ESTILO RECUADRO PLACA DE VEHÍCULO */
+    .plate-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background-color: #0f172a;
+      color: #f8fafc;
+      border: 2px solid #cbd5e1;
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-family: 'Courier New', Courier, monospace;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .plate-label {
+      font-size: 0.75rem;
+      color: #94a3b8;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+    }
+
+    .plate-number {
+      font-size: 1rem;
+      font-weight: 800;
+      color: #f59e0b;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+
     .btn-vip-whatsapp {
       display: inline-flex;
       align-items: center;
@@ -661,6 +690,13 @@
           <div>
             <div class="user-greeting-container">
               <h2>Bienvenido, <span id="userNameDisplay">Cliente</span> 👋</h2>
+              
+              <!-- RECUADRO DE PLACA DEL VEHÍCULO -->
+              <div id="vehiclePlateBox" class="plate-badge" style="display: none;">
+                <span class="plate-label">PLACA:</span>
+                <span id="userPlateDisplay" class="plate-number">---</span>
+              </div>
+
               <!-- ENLACE DE WHATSAPP VIP (Solo visible si la suscripción está activa en Supabase) -->
               <a id="vipWhatsappLink" href="#" target="_blank" class="btn-vip-whatsapp" style="display: none;">
                 💬 Soporte VIP WhatsApp
@@ -1007,16 +1043,27 @@
         if (nameDisp) nameDisp.textContent = activeUser.nombre || activeUser.name;
 
         if (supabaseClient && activeUser.id) {
-          // Consultamos siempre el estado actual en la base de datos
+          // Consulta que incluye la columna 'placa' desde Supabase
           const { data, error } = await supabaseClient
             .from('usuarios')
-            .select('regalo, monegas, membresia_activa, tipo_membresia')
+            .select('regalo, monegas, membresia_activa, tipo_membresia, placa')
             .eq('id', activeUser.id)
             .maybeSingle();
 
           if (data) {
             // Evaluamos rigurosamente si está activo (debe ser explícitamente true)
             isUserVipActive = data.membresia_activa === true;
+
+            // Mostrar/Ocultar y rellenar la Placa
+            const plateBox = document.getElementById('vehiclePlateBox');
+            const plateDisp = document.getElementById('userPlateDisplay');
+            
+            if (data.placa && plateBox && plateDisp) {
+              plateDisp.textContent = data.placa.toUpperCase();
+              plateBox.style.display = 'inline-flex';
+            } else if (plateBox) {
+              plateBox.style.display = 'none';
+            }
 
             // Mostrar Monegas
             const monegasDisp = document.getElementById('userMonegasDisplay');
@@ -1036,66 +1083,57 @@
             const vipWhatsappLink = document.getElementById('vipWhatsappLink');
 
             if (isUserVipActive) {
-              // CLIENTE ACTIVO EN BD (true):
-              if (exclusiveTitle) exclusiveTitle.style.display = 'block';
-              if (exclusiveGrid) exclusiveGrid.style.display = 'grid';
-              renderExclusive(exclusiveProducts);
-
+              const tipoMembresia = data.tipo_membresia || 'VIP';
+              if (subText) subText.textContent = `¡Tu Membresía (${tipoMembresia}) está ACTIVA! Tienes acceso prioritario a auxilio mecánico y atención en taller.`;
               if (subBtn) {
-                subBtn.textContent = '✓ Membresía VIP Activa (Contactar Soporte)';
+                subBtn.textContent = 'Solicitar Auxilio VIP por WhatsApp';
                 subBtn.style.backgroundColor = '#16a34a';
               }
-              if (subText) {
-                subText.innerHTML = '🌟 <strong>¡Tu Membresía VIP está ACTIVA!</strong> Tienes acceso a auxilio mecánico nocturno y catálogo exclusivo.';
-              }
-
               if (vipWhatsappLink) {
-                const msgVIP = encodeURIComponent(`Hola, soy socio VIP (${activeUser.nombre || ''}). Requiero atención / auxilio mecánico.`);
-                vipWhatsappLink.href = `https://wa.me/${whatsappNumber}?text=${msgVIP}`;
+                const vipMsg = encodeURIComponent(`Hola, soy socio VIP (${activeUser.nombre || ''} - Placa: ${data.placa || 'N/A'}). Necesito asistencia/atención prioritaria.`);
+                vipWhatsappLink.href = `https://wa.me/${whatsappNumber}?text=${vipMsg}`;
                 vipWhatsappLink.style.display = 'inline-flex';
               }
-
+              if (exclusiveTitle) exclusiveTitle.style.display = 'block';
+              if (exclusiveGrid) exclusiveGrid.style.display = 'grid';
             } else {
-              // CLIENTE DESACTIVADO EN BD (false):
-              if (exclusiveTitle) exclusiveTitle.style.display = 'none';
-              if (exclusiveGrid) {
-                exclusiveGrid.style.display = 'none';
-                exclusiveGrid.innerHTML = '';
-              }
-
+              if (subText) subText.textContent = 'Actualmente no cuentas con una Membresía VIP activa. Solicítala o renuévala para acceder al servicio de auxilio mecánico nocturno y beneficios exclusivos.';
               if (subBtn) {
                 subBtn.textContent = 'Solicitar / Renovar Membresía VIP';
                 subBtn.style.backgroundColor = '#a855f7';
               }
-              if (subText) {
-                subText.textContent = 'Tu membresía no está activa. Para acceder al catálogo exclusivo y auxilio nocturno, ponte al día con tu pago.';
-              }
-
-              if (vipWhatsappLink) {
-                vipWhatsappLink.style.display = 'none';
-              }
+              if (vipWhatsappLink) vipWhatsappLink.style.display = 'none';
+              if (exclusiveTitle) exclusiveTitle.style.display = 'none';
+              if (exclusiveGrid) exclusiveGrid.style.display = 'none';
             }
           }
         }
       } else {
         if (authBox) authBox.style.display = 'block';
         if (userDashboard) userDashboard.style.display = 'none';
-        toggleAuthForms('login');
+        if (exclusiveTitle) exclusiveTitle.style.display = 'none';
+        if (exclusiveGrid) exclusiveGrid.style.display = 'none';
+        
+        const plateBox = document.getElementById('vehiclePlateBox');
+        if (plateBox) plateBox.style.display = 'none';
+
+        isUserVipActive = false;
       }
     }
 
     // ==========================================
-    // 5. INICIALIZACIÓN DE EVENTOS
+    // 5. INICIALIZACIÓN
     // ==========================================
     document.addEventListener('DOMContentLoaded', () => {
-      const searchInput = document.getElementById('searchInput');
-      const categorySelect = document.getElementById('categorySelect');
-
-      if (searchInput) searchInput.addEventListener('input', filterProducts);
-      if (categorySelect) categorySelect.addEventListener('change', filterProducts);
-
       renderProducts(products);
       renderServices(services);
+      renderExclusive(exclusiveProducts);
+
+      const searchEl = document.getElementById('searchInput');
+      const catEl = document.getElementById('categorySelect');
+
+      if (searchEl) searchEl.addEventListener('input', filterProducts);
+      if (catEl) catEl.addEventListener('change', filterProducts);
     });
   </script>
 </body>
