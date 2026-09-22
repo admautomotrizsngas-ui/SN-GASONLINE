@@ -404,6 +404,109 @@
       transform: scale(1.03);
     }
 
+    /* ESTILOS BÚSQUEDA CÓDIGOS DE ERROR OBD-II */
+    .dtc-section {
+      background: #0f172a;
+      color: white;
+      padding: 20px;
+      border-radius: 12px;
+      margin: 25px 0;
+      border-left: 5px solid #0284c7;
+    }
+
+    .dtc-header h3 {
+      font-size: 1.25rem;
+      color: #38bdf8;
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .dtc-header p {
+      font-size: 0.9rem;
+      color: #94a3b8;
+      margin-bottom: 16px;
+    }
+
+    .dtc-search-box {
+      display: flex;
+      gap: 10px;
+      max-width: 500px;
+    }
+
+    .dtc-search-box input {
+      flex: 1;
+      padding: 10px 14px;
+      border-radius: 6px;
+      border: 1px solid #334155;
+      background: #1e293b;
+      color: #fff;
+      font-size: 1rem;
+      text-transform: uppercase;
+      font-weight: bold;
+      letter-spacing: 1px;
+    }
+
+    .dtc-search-box input::placeholder {
+      color: #64748b;
+      font-weight: normal;
+      text-transform: none;
+    }
+
+    .dtc-search-box button {
+      background: #0284c7;
+      color: white;
+      border: none;
+      padding: 10px 18px;
+      border-radius: 6px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .dtc-search-box button:hover {
+      background: #0369a1;
+    }
+
+    .dtc-result-card {
+      margin-top: 16px;
+      background: #1e293b;
+      border-radius: 8px;
+      padding: 16px;
+      border: 1px solid #334155;
+    }
+
+    .dtc-code-title {
+      font-size: 1.2rem;
+      color: #f59e0b;
+      font-weight: bold;
+      margin-bottom: 8px;
+    }
+
+    .dtc-block {
+      margin-bottom: 12px;
+    }
+
+    .dtc-block strong {
+      color: #38bdf8;
+      display: block;
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 3px;
+    }
+
+    .dtc-block p, .dtc-block ul {
+      color: #e2e8f0;
+      font-size: 0.92rem;
+      line-height: 1.4;
+    }
+
+    .dtc-block ul {
+      padding-left: 18px;
+    }
+
     /* ESTILOS PARA TARJETAS DE MONEGAS Y REGALOS */
     .rewards-wrapper {
       display: flex;
@@ -557,6 +660,9 @@
         flex-direction: column;
         gap: 12px;
       }
+      .dtc-search-box {
+        flex-direction: column;
+      }
     }
   </style>
 </head>
@@ -613,7 +719,7 @@
         </div>
         <div class="feature-card">
           <h3>Zona de Clientes</h3>
-          <p>Regístrate y accede a promociones exclusivas para socios registrados.</p>
+          <p>Regístrate y accede a diagnósticos de códigos de error y promociones exclusivas.</p>
         </div>
       </div>
     </div>
@@ -697,14 +803,27 @@
                 <span id="userPlateDisplay" class="plate-number">---</span>
               </div>
 
-              <!-- ENLACE DE WHATSAPP VIP (Solo visible si la suscripción está activa en Supabase) -->
+              <!-- ENLACE DE WHATSAPP VIP -->
               <a id="vipWhatsappLink" href="#" target="_blank" class="btn-vip-whatsapp" style="display: none;">
                 💬 Soporte VIP WhatsApp
               </a>
             </div>
-            <p style="color: #64748b;">Este es tu espacio exclusivo de beneficios y ofertas.</p>
+            <p style="color: #64748b;">Este es tu espacio exclusivo de beneficios, diagnóstico y ofertas.</p>
           </div>
           <button class="btn-logout" onclick="handleLogout()">Cerrar Sesión</button>
+        </div>
+
+        <!-- RECUADRO BÚSQUEDA CÓDIGOS DE ERROR OBD-II -->
+        <div class="dtc-section">
+          <div class="dtc-header">
+            <h3>🔍 Buscador de Códigos de Falla OBD-II / Check Engine</h3>
+            <p>Ingresa el código que dio el escáner (ejemplo: P0600, P0136, P0171, P0300) para conocer su significado, causas y diagnóstico.</p>
+          </div>
+          <div class="dtc-search-box">
+            <input type="text" id="dtcInput" placeholder="Escribe el código (ej. P0600)" onkeyup="if(event.key==='Enter') searchErrorCode()">
+            <button onclick="searchErrorCode()">Consultar Código</button>
+          </div>
+          <div id="dtcResultContainer" style="display: none;"></div>
         </div>
 
         <!-- TARJETA DE MEMBRESÍA VIP SN'GAS -->
@@ -768,7 +887,7 @@
     </div>
   </section>
 
-  <!-- Librería oficial de Supabase para el navegador -->
+  <!-- Librería oficial de Supabase -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
   <script>
@@ -787,8 +906,764 @@
 
     const whatsappNumber = "51999999999"; 
 
-    // Estado local de la membresía (Se sincroniza ÚNICAMENTE desde Supabase)
+    // Estado local de la membresía
     let isUserVipActive = false;
+
+    // ==========================================
+    // Base de Datos de Códigos de Falla OBD-II
+    // ==========================================
+   const dtcDatabase = {
+  // --- MÓDULO DEL MOTOR: MEZCLA, COMBUSTIÓN Y ENCENDIDO ---
+  "P0100": {
+    title: "P0100 - Falla en el Circuito del Sensor MAF (Flujo de Aire)",
+    description: "La ECU detecta una falla en la señal o circuito eléctrico del sensor de flujo de masa de aire.",
+    causes: [
+      "Sensor MAF sucio, contaminado con aceite o averiado.",
+      "Conector del sensor suelto, sulfatado o cableado roto.",
+      "Fuga de aire entre el sensor y el cuerpo de aceleración."
+    ],
+    consequences: [
+      "Luz Check Engine encendida.",
+      "Inestabilidad en marcha mínima (mínimo) y joneo al acelerar.",
+      "Aumento en el consumo de combustible.",
+      "Recomendación: Limpieza especializada del MAF o revisión de arnés."
+    ]
+  },
+  "P0101": {
+    title: "P0101 - Sensor MAF Fuera de Rango / Rendimiento",
+    description: "La lectura del flujo de aire no concuerda con las RPM ni con la apertura de la mariposa.",
+    causes: [
+      "Fuga de vacío o entrada de aire no medida en el múltiple de admisión.",
+      "Sensor MAF sucio o descalibrado.",
+      "Filtro de aire excesivamente obstruido."
+    ],
+    consequences: [
+      "Falta de respuesta al presionar el acelerador.",
+      "Humo negro en el escape por mezcla descompensada.",
+      "Recomendación: Revisar mangueras de vacío, filtro de aire y estado del sensor."
+    ]
+  },
+  "P0106": {
+    title: "P0106 - Sensor MAP Fuera de Rango / Rendimiento",
+    description: "El sensor de presión absoluta del múltiple registra lecturas incoherentes respecto a la carga del motor.",
+    causes: [
+      "Manguera del sensor MAP rota, doblada o desconectada.",
+      "Entradas de aire pirata por empaquetadura de admisión.",
+      "Sensor MAP dañado o conector con falso contacto."
+    ],
+    consequences: [
+      "Dificultad para encender en frío o en caliente.",
+      "Joneo y detonaciones en aceleración brusca.",
+      "Recomendación: Probar hermeticidad de la admisión y señal con escáner."
+    ]
+  },
+  "P0113": {
+    title: "P0113 - Señal Alta en Circuito del Sensor IAT (Temperatura del Aire)",
+    description: "La ECU registra una temperatura de aire extremadamente baja o circuito abierto en el sensor IAT.",
+    causes: [
+      "Sensor IAT desconectado o con arnés dañado.",
+      "Elemento interno del sensor dañado.",
+      "Cortocircuito a positivo en el cableado."
+    ],
+    consequences: [
+      "Lectura fija a bajas temperaturas que enriquece la mezcla innecesariamente.",
+      "Olor a combustible no quemado y marcha inestable.",
+      "Recomendación: Medir resistencia del sensor y continuidad del arnés."
+    ]
+  },
+  "P0117": {
+    title: "P0117 - Señal Baja en Circuito del Sensor ECT (Temperatura de Refrigerante)",
+    description: "El módulo de control recibe un voltaje muy bajo del ECT, indicando lecturas erróneas de alta temperatura.",
+    causes: [
+      "Cortocircuito a masa en el cableado del sensor ECT.",
+      "Sensor de temperatura de refrigerante defectuoso.",
+      "Sobrecalentamiento real del motor o bajo nivel de refrigerante."
+    ],
+    consequences: [
+      "Electroventiladores encendidos de forma permanente en directo.",
+      "Dificultad de arranque y mezcla Pobre/Rica según la compensación de la ECU.",
+      "Recomendación: Verificar nivel de refrigerante, temperatura real y sensor."
+    ]
+  },
+  "P0121": {
+    title: "P0121 - Rendimiento / Rango del Sensor TPS (Posición del Acelerador)",
+    description: "Desacuerdo en la señal entregada por el TPS en comparación con el resto de sensores de carga.",
+    causes: [
+      "Pista de carbón o contactos internos del TPS gastados.",
+      "Cuerpo de aceleración sucio o trabado mecánicamente.",
+      "Conector sulfatado o flojo."
+    ],
+    consequences: [
+      "Aceleración a tirones o el vehículo entra en modo de emergencia (Limp Mode).",
+      "Marcha mínima acelerada o fluctuante.",
+      "Recomendación: Limpieza de mariposa y calibración/reemplazo de sensor TPS."
+    ]
+  },
+  "P0130": {
+    title: "P0130 - Falla en Circuito del Sensor de Oxígeno (Banco 1, Sensor 1)",
+    description: "Incapacidad de la ECU para recibir señal correcta del primer sensor de oxígeno para la regulación de mezcla.",
+    causes: [
+      "Sensor de oxígeno quemado, agotado o contaminado.",
+      "Cableado rozado, derretido o desconectado cerca del mofle.",
+      "Fusible o relé de alimentación del sensor quemado."
+    ],
+    consequences: [
+      "Alto consumo de combustible al perder el bucle cerrado (Closed Loop).",
+      "Inestabilidad en el motor tanto en gasolina como en gas.",
+      "Recomendación: Revisar voltaje de oscillación en datos en vivo y reemplazar sensor."
+    ]
+  },
+  "P0135": {
+    title: "P0135 - Falla en Calentador del Sensor de Oxígeno (Banco 1, Sensor 1)",
+    description: "El circuito de calefacción interna del sensor primario no funciona, demorando el control de emisiones en frío.",
+    causes: [
+      "Resistencia interna del calentador abierta o quemada.",
+      "Cableado del circuito de calefacción cortado.",
+      "Relé de control o fusible defectuoso."
+    ],
+    consequences: [
+      "El motor tarda más en estabilizar la mezcla al encender en frío.",
+      "Mayor emisión de contaminantes y gasto de combustible en tramos cortos.",
+      "Recomendación: Medir la resistencia en ohms de las patillas del calentador."
+    ]
+  },
+  "P0136": {
+    title: "P0136 - Falla en el Circuito del Sensor de Oxígeno (Banco 1, Sensor 2)",
+    description: "La ECU detecta lecturas anormales o falta de señal en el segundo sensor de oxígeno (posterior al catalizador).",
+    causes: [
+      "Sensor de oxígeno posterior desgastado o averiado.",
+      "Cableado del sensor quemado por contacto con el tubo de escape.",
+      "Fuga de gases en la línea de escape antes o cerca del sensor.",
+      "Mezcla inadecuada durante el funcionamiento en GLP/GNV."
+    ],
+    consequences: [
+      "Aumento leve en el consumo de combustible.",
+      "Luz Check Engine encendida.",
+      "El vehículo suele andar con normalidad pero no supera la revisión técnica.",
+      "Recomendación: Limpieza/cambio de sensor y verificación de fugas de escape."
+    ]
+  },
+  "P0171": {
+    title: "P0171 - Mezcla Demasiado Pobre (Banco 1)",
+    description: "El sistema detecta exceso de aire o falta de combustible en la mezcla aire/gasolina o gas.",
+    causes: [
+      "Entrada no medida de aire (chupada de aire en el manguito de admisión o empaquetaduras).",
+      "Inyectores de gasolina o gas sucios/obstruidos.",
+      "Filtro de gas saturado o presión de regulador/reductor baja.",
+      "Filtro de combustible tapado o bomba de gasolina débil."
+    ],
+    consequences: [
+      "Joneo al acelerar, cascabeleo o detonaciones en frío.",
+      "Inestabilidad en mínimo (RPM suben y bajan).",
+      "Riesgo de recalentamiento de válvulas si se mantiene andando pobre.",
+      "Recomendación: Calibración/mapeo del equipo de gas y revisión de fugas de admisión."
+    ]
+  },
+  "P0172": {
+    title: "P0172 - Mezcla Demasiado Rica (Banco 1)",
+    description: "La ECU registra exceso de combustible o falta de aire en la combustión.",
+    causes: [
+      "Presión de gas muy alta en el regulador.",
+      "Inyector de gas o gasolina pegado abriendo.",
+      "Filtro de aire excesivamente sucio.",
+      "Sensor MAP o MAF entregando lecturas erróneas."
+    ],
+    consequences: [
+      "Olor fuerte a gas/combustible no quemado por el escape.",
+      "Humo negro al acelerar y alto consumo de combustible.",
+      "Mofleo o motor ahogado al intentar encender.",
+      "Recomendación: Mantenimiento de inyectores y regulación de presión de gas."
+    ]
+  },
+  "P0300": {
+    title: "P0300 - Falla Múltiple de Cilindros / Misfire Detectado",
+    description: "Ocurren detonaciones a destiempo o saltos de chispa erráticos en uno o varios cilindros.",
+    causes: [
+      "Bujías gastadas o luz de electrodo inadecuada para GLP/GNV.",
+      "Cables de bujía o bobinas de encendido agrietadas o defectuosas.",
+      "Inyectores de gas con baja presión o mangueras dobladas.",
+      "Compresión desigual entre cilindros."
+    ],
+    consequences: [
+      "Motor tembloroso, vibraciones fuertes en la cabina.",
+      "Pérdida drástica de fuerza al subir pendientes.",
+      "Luz Check Engine parpadea (indicador de daño potencial al catalizador).",
+      "Recomendación: Inspección inmediata de bujías, bobinas y prueba de compresión."
+    ]
+  },
+  "P0301": {
+    title: "P0301 - Fallo de Encendido Detectado en Cilindro 1",
+    description: "Pérdida de combustión aislada específicamente en el primer cilindro del motor.",
+    causes: [
+      "Bujía o bobina independiente del cilindro 1 defectuosa.",
+      "Inyector de gasolina/gas del cilindro 1 tapado o sin pulso.",
+      "Pérdida de compresión por válvulas o empaque de culata en cilindro 1."
+    ],
+    consequences: [
+      "Cabeceo perceptible en mínimo y falta de potencia.",
+      "Tirones en baja velocidad.",
+      "Recomendación: Intercambiar bobina con otro cilindro para confirmar falla."
+    ]
+  },
+  "P0302": {
+    title: "P0302 - Fallo de Encendido Detectado en Cilindro 2",
+    description: "Pérdida de combustión aislada específicamente en el segundo cilindro del motor.",
+    causes: [
+      "Bujía o bobina del cilindro 2 quemada o en cortocircuito.",
+      "Boquilla o inyector de gas del cilindro 2 obstruido.",
+      "Fuga de compresión en cilindro 2."
+    ],
+    consequences: [
+      "Vibración marcada en motor y consumo elevado.",
+      "Recomendación: Probar pulso de inyección y estado de chispa en cilindro 2."
+    ]
+  },
+  "P0303": {
+    title: "P0303 - Fallo de Encendido Detectado en Cilindro 3",
+    description: "Pérdida de combustión aislada específicamente en el tercer cilindro del motor.",
+    causes: [
+      "Bujía desgastada o bobina averiada en cilindro 3.",
+      "Inyector atascado o con bajo flujo.",
+      "Problema mecánico en el tren de válvulas."
+    ],
+    consequences: [
+      "Pérdida de fuerza y fallas al realizar cambios de marcha.",
+      "Recomendación: Inspeccionar bujía y emulación de inyector en gas."
+    ]
+  },
+  "P0304": {
+    title: "P0304 - Fallo de Encendido Detectado en Cilindro 4",
+    description: "Pérdida de combustión aislada específicamente en el cuarto cilindro del motor.",
+    causes: [
+      "Bujía con electrodo cerrado o quemado en cilindro 4.",
+      "Bobina de encendido agrietada con fuga de alta tensión.",
+      "Falla en pulso del simulador de inyección de gas."
+    ],
+    consequences: [
+      "Soplado errático por el tubo de escape y cascabeleo en carga.",
+      "Recomendación: Revisar componente eléctrico y mecánico del cilindro 4."
+    ]
+  },
+  "P0335": {
+    title: "P0335 - Falla en Circuito del Sensor CKP (Posición del Cigüeñal)",
+    description: "Falta de señal primaria de sincronización del motor para inyección y chispa.",
+    causes: [
+      "Sensor CKP dañado o con viruta metálica adosada a la punta.",
+      "Rueda fónica (reluctante) rota, doblada o sin dientes.",
+      "Cableado del CKP cortado o rozado con la polea."
+    ],
+    consequences: [
+      "El vehículo no arranca o se apaga intempestivamente en marcha.",
+      "Corte brusco de aceleración.",
+      "Recomendación: Medir resistencia, alineación y presencia de pulso del sensor."
+    ]
+  },
+  "P0340": {
+    title: "P0340 - Falla en Circuito del Sensor CMP (Posición del Árbol de Levas)",
+    description: "Pérdida de señal de fase de válvulas necesaria para la inyección secuencial.",
+    causes: [
+      "Sensor CMP defectuoso o desconectado.",
+      "Cadena o faja de distribución estirada o fuera de punto.",
+      "Daño en los conectores del arnés superior del motor."
+    ],
+    consequences: [
+      "Arranque prolongado (da varias vueltas antes de encender).",
+      "Pérdida de eficiencia y potencia en altas RPM.",
+      "Recomendación: Verificar tiempo de distribución y reemplazar sensor CMP."
+    ]
+  },
+
+  // --- EMISIONES, COMBUSTIBLE Y ACTUADORES ---
+  "P0401": {
+    title: "P0401 - Flujo Insuficiente en el Sistema EGR",
+    description: "La ECU detecta que los gases de recirculación no están ingresando adecuadamente al múltiple.",
+    causes: [
+      "Válvula EGR trancada por acumulación pesada de hollín y carbón.",
+      "Conductos internos del múltiple tapados.",
+      "Manguera de vacío de control EGR rota."
+    ],
+    consequences: [
+      "Cascabeleo o picado de bielas al acelerar bajo carga.",
+      "Aumento de temperatura en la cámara de combustión.",
+      "Recomendación: Mantenimiento y descarbonizado de la válvula y pasajes EGR."
+    ]
+  },
+  "P0420": {
+    title: "P0420 - Eficiencia del Catalizador por Debajo del Umbral (Banco 1)",
+    description: "El catalizador no está filtrando adecuadamente los gases de escape.",
+    causes: [
+      "Catalizador agotado u obstruido.",
+      "Mala mezcla prolongada (andar con falla de bujía o mezcla rica/pobre).",
+      "Sensor de oxígeno defectuoso."
+    ],
+    consequences: [
+      "Luz Check Engine encendida.",
+      "Pérdida de potencia en altas RPM si el catalizador está tapado.",
+      "Recomendación: Diagnóstico con osciloscopio o escáner en taller."
+    ]
+  },
+  "P0441": {
+    title: "P0441 - Flujo Incorrecro de Purga del Sistema EVAP",
+    description: "Pérdida de control en la recirculación de vapores del tanque de combustible.",
+    causes: [
+      "Válvula solenoide de purga del cánister trabada abierta o cerrada.",
+      "Mangueras de vacío del cánister desconectadas o rotas.",
+      "Falla eléctrica en el circuito de control de la purga."
+    ],
+    consequences: [
+      "Inestabilidad en mínimo justo después de cargar combustible.",
+      "Luz Check Engine permanente.",
+      "Recomendación: Verificar apertura mecánica de la solenoide con vacuómetro."
+    ]
+  },
+  "P0442": {
+    title: "P0442 - Fuga Pequeña Detectada en el Sistema EVAP",
+    description: "Presencia de un microescape de vapores de gasolina en el tanque o conductos.",
+    causes: [
+      "Tapa del tanque de gasolina mal cerrada, sucia o con empaque rajado.",
+      "Fisura pequeña en mangueras de vapor del cánister.",
+      "Sensor de presión del tanque descalibrado."
+    ],
+    consequences: [
+      "Luz Check Engine encendida.",
+      "Olor leve a gasolina alrededor del vehículo.",
+      "Recomendación: Revisar o cambiar la tapa del tanque y verificar abrazaderas."
+    ]
+  },
+  "P0455": {
+    title: "P0455 - Fuga Grande Detectada en el Sistema EVAP",
+    description: "Escape masivo de vapores en la línea de gases del tanque de gasolina.",
+    causes: [
+      "Tapa del combustible inexistente o totalmente suelta.",
+      "Manguera principal del cánister desconectada o rajada.",
+      "Válvula de ventilación trabada completamente abierta."
+    ],
+    consequences: [
+      "Evaporación rápida de gasolina.",
+      "Luz Check Engine activa.",
+      "Recomendación: Prueba de humo en sistema EVAP para localizar el corte."
+    ]
+  },
+  "P0500": {
+    title: "P0500 - Falla en el Sensor de Velocidad del Vehículo (VSS)",
+    description: "Falta de información sobre la velocidad de desplazamiento del vehículo hacia la ECU/TCM.",
+    causes: [
+      "Sensor VSS defectuoso o piñón interno roto en la caja.",
+      "Línea de señal cortada hacia el tablero o computadora.",
+      "Falla en la unidad del ABS (en autos que toman la velocidad de las ruedas)."
+    ],
+    consequences: [
+      "El velocímetro del tablero deja de funcionar o marca erráticamente.",
+      "Cambios bruscos en cajas automáticas.",
+      "Recomendación: Revisar engranaje del sensor en la transmisión o módulo ABS."
+    ]
+  },
+  "P0505": {
+    title: "P0505 - Falla en el Sistema de Control de Marcha Mínima (IAC)",
+    description: "Imposibilidad de la computadora para regular las RPM estables en ralentí.",
+    causes: [
+      "Válvula IAC sucia, trabada con hollín o quemada.",
+      "Chupada de aire no calculada en la admisión.",
+      "Conductos de derivación de aire (Bypass) tapados."
+    ],
+    consequences: [
+      "El motor se apaga en los semáforos al soltar el acelerador.",
+      "Revoluciones demasiado altas en mínimo (RPM elevadas).",
+      "Recomendación: Limpieza cuidadosa del cuerpo IAC y pasajes con solvente."
+    ]
+  },
+  "P0601": {
+    title: "P0601 - Error de Suma de Comprobación (Checksum) en Memoria de la ECU",
+    description: "Falla crítica interna en la memoria flash/EPROM del módulo de control del motor.",
+    causes: [
+      "Picos de voltaje por mala desconexión de batería o puente de arranque.",
+      "Móduco de control inundado o golpeado.",
+      "Reprogramación fallida de la ECU."
+    ],
+    consequences: [
+      "El vehículo puede no encender o funcionar con comportamiento impredecible.",
+      "Múltiples testigos encendidos en el tablero.",
+      "Recomendación: Reparación electrónica de la computadora o reemplazo."
+    ]
+  },
+  "P0606": {
+    title: "P0606 - Falla de Procesamiento Interno en ECU / PCM",
+    description: "El procesador principal de la ECU detecta una inconsistencia en sus cálculos de control.",
+    causes: [
+      "Falta de buena tierra/masa principal de la computadora.",
+      "Voltaje inestable entregado por el alternador.",
+      "Daño interno permanente en el procesador."
+    ],
+    consequences: [
+      "Corte instantáneo del motor en marcha.",
+      "No hay respuesta del acelerador electrónico.",
+      "Recomendación: Limpiar bornes, tierras de la ECU y comprobar alternador."
+    ]
+  },
+  "P0685": {
+    title: "P0685 - Circuito Abierto en Relé Principal de ECM / PCM",
+    description: "Pérdida de alimentación de energía comandada hacia la computadora del vehículo.",
+    causes: [
+      "Relé principal de la ECU pegado, quemado o flojo.",
+      "Fusible de alimentación abierto o con sulfato.",
+      "Cable de señal de mando roto entre relé y ECU."
+    ],
+    consequences: [
+      "El motor da arranque (start) pero no enciende por falta de chispa e inyección.",
+      "No enciende la luz de Check Engine en el tablero al poner contacto.",
+      "Recomendación: Probar o intercambiar el relé principal en la fusilera."
+    ]
+  },
+
+  // --- DISTRIBUCIÓN VARIABLE, CONTROL Y TRANSMISIÓN ---
+  "P0010": {
+    title: "P0010 - Circuito del Actuador de Posición de Árbol de Levas (VVT Banco 1)",
+    description: "Falla eléctrica en la solenoide que controla el tiempo variable de válvulas.",
+    causes: [
+      "Solenoide/Válvula OCV VVT quemada o trabada.",
+      "Nivel de aceite de motor demasiado bajo.",
+      "Aceite sucio o con viscosidad incorrecta."
+    ],
+    consequences: [
+      "Pérdida de pique y respuesta en baja o alta velocidad.",
+      "Consumo excesivo de gasolina o gas.",
+      "Recomendación: Cambio de aceite, filtro y prueba del solenoide VVT."
+    ]
+  },
+  "P0011": {
+    title: "P0011 - Posición del Árbol de Levas Demasiado Adelantada (Banco 1)",
+    description: "El tiempo de apertura de válvulas está fuera del valor deseado por la ECU.",
+    causes: [
+      "Conductos de aceite hacia la polea VVT obstruidos por barro/lodo de aceite.",
+      "Válvula solenoide VVT trabada mecánicamente.",
+      "Mecanismo variador de levas interno averiado."
+    ],
+    consequences: [
+      "Ralentí inestable o vibración al estar detenido.",
+      "Rendimiento deficiente del motor.",
+      "Recomendación: Lavado interno de motor (engine flush) y revisión de solenoide."
+    ]
+  },
+  "P0016": {
+    title: "P0016 - Correlación Cigüeñal - Árbol de Levas (Banco 1 Sensor A)",
+    description: "Desincronización física entre el giro del cigüeñal y la posición del eje de levas.",
+    causes: [
+      "Faja o cadena de distribución estirada o salteada de diente.",
+      "Templador o piñón VVT desgastado.",
+      "Sensor CKP o CMP flojo o mal instalado."
+    ],
+    consequences: [
+      "Cascabeleo o ruidos metálicos en la tapa de balancines/distribución.",
+      "Riesgo de doblado de válvulas si la distribución se salta más dientes.",
+      "Recomendación: Revisar de inmediato la puesta a punto de la distribución."
+    ]
+  },
+  "P0087": {
+    title: "P0087 - Presión del Riel de Combustible Demasiado Baja",
+    description: "Falta de presión en la línea principal de gasolina para abastecer los inyectores.",
+    causes: [
+      "Filtro de combustible completamente tapado.",
+      "Bomba de gasolina desgastada o regulador de presión con fuga.",
+      "Obstrucción o estrangulamiento en la manguera de alimentación."
+    ],
+    consequences: [
+      "Joneo severo al acelerar a fondo o subir cuestas.",
+      "El auto se ahoga o se apaga por falta de gasolina.",
+      "Recomendación: Medir presión de bomba con manómetro en el riel."
+    ]
+  },
+  "P0088": {
+    title: "P0088 - Presión del Riel de Combustible Demasiado Alta",
+    description: "Exceso de presión en la línea de combustible por sobrepaso de límites.",
+    causes: [
+      "Regulador de presión de combustible trancado en posición cerrada.",
+      "Línea de retorno de combustible doblada u obstruida.",
+      "Sensor de presión del riel entregando señal errónea."
+    ],
+    consequences: [
+      "Humo negro, enriquecimiento de mezcla y goteo de inyectores.",
+      "Daño potencial a las mangueras o sellos por sobrepresión.",
+      "Recomendación: Limpiar o sustituir el regulador de presión de combustible."
+    ]
+  },
+  "P0700": {
+    title: "P0700 - Sistema de Control de Transmisión (Solicitud de MIL)",
+    description: "El módulo TCM de la caja automática informa a la ECU que hay una falla grabada en la transmisión.",
+    causes: [
+      "Falla eléctrica o mecánica dentro de la caja de cambios automática.",
+      "Nivel de aceite de caja (ATF) muy bajo o degradado.",
+      "Solenoides de cambio defectuosos."
+    ],
+    consequences: [
+      "La caja se tranca en 3ra marcha (modo de protección/emergencia).",
+      "Golpes bruscos al pasar los cambios.",
+      "Recomendación: Escanear específicamente el módulo TCM de transmisión."
+    ]
+  },
+  "P0730": {
+    title: "P0730 - Relación de Transmisión Incorrecta",
+    description: "Deslizamiento interno en la caja automática al comparar RPM de entrada y salida.",
+    causes: [
+      "Nivel bajo de fluido de transmisión automática (ATF).",
+      "Discos de embrague de caja desgastados o patinando.",
+      "Solenoides de cambio con baja presión de fluido."
+    ],
+    consequences: [
+      "El motor se acelera solo pero el auto no avanza con fuerza.",
+      "Pérdida de marchas o patinado en cambios altos.",
+      "Recomendación: Revisar nivel, color y olor del fluido ATF."
+    ]
+  },
+  "P2101": {
+    title: "P2101 - Rango / Rendimiento del Motor del Cuerpo de Aceleración",
+    description: "La mariposa electrónica no se abre o cierra en la posición exigida por la computadora.",
+    causes: [
+      "Cuerpo de aceleración altamente carbonizado o trancado.",
+      "Engranajes plásticos internos del cuerpo de aceleración desgastados.",
+      "Falla en el motor paso a paso del cuerpo electrónico."
+    ],
+    consequences: [
+      "El auto no responde al pedal de aceleración.",
+      "Revoluciones limitadas a no más de 1500-2000 RPM.",
+      "Recomendación: Mantenimiento y lavado del cuerpo de aceleración."
+    ]
+  },
+  "P2135": {
+    title: "P2135 - Correlación de Voltaje Sensores TPS A y B",
+    description: "Incoherencia entre la doble señal de seguridad del cuerpo de aceleración electrónico.",
+    causes: [
+      "Pistas de contacto internas del cuerpo gastadas.",
+      "Conector del cuerpo de aceleración sulfatado o flojo.",
+      "Caída de voltaje en la línea de referencia de 5 Voltios."
+    ],
+    consequences: [
+      "El vehículo entra de inmediato en modo de fallo seguro.",
+      "Luz Check Engine y testigo de acelerador (rayo) encendidos.",
+      "Recomendación: Comprobar conectores y reemplazar cuerpo si hay desgaste."
+    ]
+  },
+
+  // --- RED DE COMUNICACIÓN (CÓDIGOS U) ---
+  "P0600": {
+    title: "P0600 - Falla en el Enlace de Comunicación Serie (CAN Bus / Red de Unidades)",
+    description: "Indica una pérdida de comunicación entre la computadora principal (ECU/PCM) y otros módulos electrónicos como el ABS, la caja automática o el módulo de conversión GLP/GNV.",
+    causes: [
+      "Batería débil, sulfatada o caída grave de voltaje durante el arranque.",
+      "Cableado o conectores del sistema CAN Bus flojos, sulfatados o dañados.",
+      "Falsos contactos en la instalación del emulador o computadora de gas.",
+      "Relé principal de energía defectuoso o fusible fundido."
+    ],
+    consequences: [
+      "Luz Check Engine encendida.",
+      "Joneo, falta de potencia o dificultad para conmutar entre Gasolina y Gas.",
+      "En casos graves, el vehículo se apaga o no activa el arranque.",
+      "Recomendación: Revisar voltaje de batería, empalmes de tierra y llevar a escaneo multimarca a taller."
+    ]
+  },
+  "U0001": {
+    title: "U0001 - Bus de Comunicación CAN de Alta Velocidad",
+    description: "Falla general en la red física de transmisión de datos entre los módulos del vehículo.",
+    causes: [
+      "Líneas CAN_H o CAN_L en cortocircuito a masa o a positivo.",
+      "Unidad electrónica de algún sistema inundada o cruzada internamente.",
+      "Resistencia terminadora de red (120 Ohms) desvalorizada."
+    ],
+    consequences: [
+      "Múltiples testigos encendidos en el tablero (ABS, Check, Airbag).",
+      "Indicadores del tablero caen a cero mientras se conduce.",
+      "Recomendación: Medición de resistencia de red CAN con multímetro en el puerto OBD-II."
+    ]
+  },
+  "U0100": {
+    title: "U0100 - Pérdida de Comunicación con el Módulo ECM / PCM (Motor)",
+    description: "Los demás módulos del vehículo (ABS, Tablero, Caja) perdieron el enlace de datos con la ECU de motor.",
+    causes: [
+      "Falta de energía o tierra en la computadora de motor.",
+      "Fusible de ECM quemado.",
+      "Corte en los cables de comunicación entre módulos."
+    ],
+    consequences: [
+      "El vehículo da arranque pero el motor no enciende.",
+      "No hay comunicación del escáner con el módulo de motor.",
+      "Recomendación: Medir alimentaciones (+12V y tierras) en los conectores de la ECU."
+    ]
+  },
+  "U0101": {
+    title: "U0101 - Pérdida de Comunicación con el Módulo TCM (Transmisión)",
+    description: "La ECU de motor perdió el enlace de datos con la computadora de la caja automática.",
+    causes: [
+      "Fusible o relé de la caja automática quemado.",
+      "Conector del selector de la transmisión sulfatado.",
+      "Módulo TCM averiado."
+    ],
+    consequences: [
+      "Caja automática golpea o queda bloqueada en una sola marcha.",
+      "No marca la posición de la palanca (P, R, N, D) en el tablero.",
+      "Recomendación: Chequear fusilera y conector principal de la caja."
+    ]
+  },
+  "U0121": {
+    title: "U0121 - Pérdida de Comunicación con el Módulo de Control ABS",
+    description: "Pérdida de transmisión de datos entre la red del auto y el módulo de frenos antibloqueo.",
+    causes: [
+      "Falta de alimentación al módulo ABS por fusible principal fundido.",
+      "Sulfatación pesada en el conector multipin del ABS.",
+      "Falla en la tarjeta electrónica del módulo ABS."
+    ],
+    consequences: [
+      "Testigo de ABS, Freno de Mano y Control de Estabilidad encendidos.",
+      "Pérdida de la señal de velocidad en el velocímetro.",
+      "Recomendación: Limpiar conector del ABS y revisar fusibles de alto amperaje."
+    ]
+  },
+  "U0155": {
+    title: "U0155 - Pérdida de Comunicación con el Cuadro de Instrumentos (Tablero)",
+    description: "Las computadoras del auto no reciben respuesta ni envían datos al panel de instrumentos.",
+    causes: [
+      "Falso contacto o conector suelto en la parte posterior del tablero.",
+      "Falla interna en la placa del velocímetro/cuadro.",
+      "Caída de voltaje en la batería."
+    ],
+    consequences: [
+      "Agujas del tablero caídas o marcadores muertos.",
+      "En algunos vehículos, el inmovilizador bloquea el arranque.",
+      "Recomendación: Inspección de conectores del tablero y prueba de batería."
+    ]
+  },
+
+  // --- CÓDIGOS ESPECÍFICOS Y RELEVANTES EN SISTEMAS A GAS (GLP / GNV) ---
+  "P0200": {
+    title: "P0200 - Falla en Circuito de Inyectores / Emulador de Gas",
+    description: "La ECU detecta una interrupción en el circuito de control de los inyectores de combustible.",
+    causes: [
+      "Módulo emulador de inyectores (corte de gas) defectuoso o quemado.",
+      "Empalmes de cables mal soldados o flojos en la instalación del equipo de gas.",
+      "Inyector de gasolina o gas desvalorizado en ohmios."
+    ],
+    consequences: [
+      "Joneo y corte momentáneo de combustible.",
+      "El motor falla al cambiar de gasolina a gas o viceversa.",
+      "Recomendación: Verificar estaño y aislamiento en la emulación de inyectores."
+    ]
+  },
+  "P0201": {
+    title: "P0201 - Circuito Abierto / Falla en Inyector Cilindro 1",
+    description: "Interrupción de corriente o pulso en la línea del inyector del primer cilindro.",
+    causes: [
+      "Corte o emulación defectuosa en el cable del inyector 1 por el sistema de gas.",
+      "Bobina del inyector del cilindro 1 abierta.",
+      "Conector del inyector zafado."
+    ],
+    consequences: [
+      "El motor trabaja en 3 cilindros constantemente.",
+      "Luz Check Engine destellando.",
+      "Recomendación: Medir resistencia del inyector y continuidad del arnés de gas."
+    ]
+  },
+  "P0202": {
+    title: "P0202 - Circuito Abierto / Falla en Inyector Cilindro 2",
+    description: "Interrupción de corriente o pulso en la línea del inyector del segundo cilindro.",
+    causes: [
+      "Falso contacto en el cableado intersecado para el riel de gas.",
+      "Inyector dañado o conector con sulfato.",
+      "Canal del emulador de gas quemado en cilindro 2."
+    ],
+    consequences: [
+      "Motor tembloroso por cilindro inactivo.",
+      "Recomendación: Probar con foco LED de pulsos el arnés de inyección."
+    ]
+  },
+  "P0203": {
+    title: "P0203 - Circuito Abierto / Falla en Inyector Cilindro 3",
+    description: "Interrupción de corriente o pulso en la línea del inyector del tercer cilindro.",
+    causes: [
+      "Desconexión en la arnés adicional del equipo de gas.",
+      "Inyector con bobina interna en cortocircuito.",
+      "Falla en el driver de inyección de la ECU o computadora de gas."
+    ],
+    consequences: [
+      "Pérdida severa de potencia.",
+      "Recomendación: Comprobar arnés de corte de inyección."
+    ]
+  },
+  "P0204": {
+    title: "P0204 - Circuito Abierto / Falla en Inyector Cilindro 4",
+    description: "Interrupción de corriente o pulso en la línea del inyector del cuarto cilindro.",
+    causes: [
+      "Cableado del cilindro 4 derretido por rozamiento con el motor.",
+      "Emulador de gas dañado en la salida 4.",
+      "Inyector trabado o quemado."
+    ],
+    consequences: [
+      "Falta de respuesta del motor al acelerar.",
+      "Recomendación: Revisar arnés y sustituir emulador de gas si está dañado."
+    ]
+  },
+  "P219A": {
+    title: "P219A - Desbalance en la Relación Aire/Combustible (Banco 1)",
+    description: "La ECU nota diferencias significativas de flujo o mezcla entre cilindros del mismo banco.",
+    causes: [
+      "Un inyector del riel de gas entrega más o menos caudal que los demás.",
+      "Boquillas de gas de diámetro desigual o descalibradas mecánicamente.",
+      "Fuga de aire en un solo puerto del múltiple de admisión."
+    ],
+    consequences: [
+      "Marcha inestable y vibraciones sólo al funcionar en gas.",
+      "Consumo irregular entre cilindros con desgaste prematuro de bujías.",
+      "Recomendación: Calibrar o reemplazar el riel de inyectores de gas (GLP/GNV)."
+    ]
+  }
+};
+
+    // Función de Búsqueda de Códigos
+    function searchErrorCode() {
+      const inputEl = document.getElementById('dtcInput');
+      const container = document.getElementById('dtcResultContainer');
+      if (!inputEl || !container) return;
+
+      const code = inputEl.value.trim().toUpperCase();
+      if (!code) {
+        alert("Por favor ingresa un código de error (Ejemplo: P0600).");
+        return;
+      }
+
+      const dtc = dtcDatabase[code];
+
+      if (dtc) {
+        const causesList = dtc.causes.map(c => `<li>${c}</li>`).join('');
+        const consList = dtc.consequences.map(c => `<li>${c}</li>`).join('');
+
+        container.innerHTML = `
+          <div class="dtc-result-card">
+            <div class="dtc-code-title">📌 ${dtc.title}</div>
+            <div class="dtc-block">
+              <strong>📖 Significado / Descripción:</strong>
+              <p>${dtc.description}</p>
+            </div>
+            <div class="dtc-block">
+              <strong>⚙️ Causas Más Frecuentes:</strong>
+              <ul>${causesList}</ul>
+            </div>
+            <div class="dtc-block">
+              <strong>⚠️ Consecuencias y Recomendación:</strong>
+              <ul>${consList}</ul>
+            </div>
+          </div>
+        `;
+        container.style.display = 'block';
+      } else {
+        container.innerHTML = `
+          <div class="dtc-result-card" style="border-left: 4px solid #ef4444;">
+            <div class="dtc-code-title" style="color: #f87171;">⚠️ Código "${code}" no encontrado en la base rápida</div>
+            <div class="dtc-block">
+              <p style="color: #cbd5e1;">Este código no se encuentra registrado en nuestra guía rápida automática, pero nuestros técnicos de <strong>Automotriz SN'GAS</strong> pueden diagnosticarlo directamente con nuestro escáner multimarca.</p>
+              <p style="margin-top: 8px;"><a href="https://wa.me/${whatsappNumber}?text=${encodeURIComponent('Hola, tengo el código de error ' + code + ' en mi auto y deseo consultar un diagnóstico en taller.')}" target="_blank" style="color: #38bdf8; font-weight: bold; text-decoration: underline;">👉 Consultar con un técnico por WhatsApp</a></p>
+            </div>
+          </div>
+        `;
+        container.style.display = 'block';
+      }
+    }
 
     // ==========================================
     // 2. CATÁLOGO Y DATOS
@@ -800,8 +1675,7 @@
       { id: 4, name: 'Recarga GNV Alto Rendimiento', category: ['GNV'], price: 2.10, image: 'https://picsum.photos/id/1073/300/200' },
       { id: 5, name: 'GLP Vehicular (Litro)', category: ['GLP'], price: 7.20, image: 'https://picsum.photos/id/1074/300/200' },
       { id: 6, name: 'Balón GLP Doméstico 10kg', category: ['GLP'], price: 48.00, image: 'https://picsum.photos/id/1075/300/200' },
-      { id: 9, name: 'Filtro de Gas (GNV/GLP)', category: ['GNV', 'GLP'], price: 25.00, image: 'filtro%20de%20gas.jpg' },
-      { id: 9, name: 'Filtro de Gas (GNV/GLP)', category: ['GNV', 'GLP'], price: 25.00, image: 'file:///C:/Users/Usuario/Desktop/tiendaonline/Gemini_Generated_Image_5v67sj5v67sj5v67.jfif' }
+      { id: 9, name: 'Filtro de Gas (GNV/GLP)', category: ['GNV', 'GLP'], price: 25.00, image: 'Gemini_Generated_Image_5v67sj5v67sj5v67.jfif' }
     ];
 
     const services = [
@@ -810,9 +1684,9 @@
     ];
 
     const exclusiveProducts = [
-      { id: 10, name: 'Scaneo Gratis', category: ['Exclusivo'], price: 0.00, image: 'scaneo.jfif' },
-      { id: 11, name: 'Regulacion', category: ['Exclusivo'], price: 15.00, image: 'regulacion.jfif' },
-      { id: 12, name: 'Revision de Fluidos', category: ['Exclusivo'], price: 0.00, image: 'revision%20de%20fuidos.jfif' }
+      { id: 10, name: 'Revisión con Escáner Multimarca', category: ['Exclusivo'], price: 18.00, image: 'https://picsum.photos/id/1079/300/200' },
+      { id: 11, name: 'Escaneo Electrónico (Gratis por compra)', category: ['Exclusivo'], price: 0.00, image: 'https://picsum.photos/id/1080/300/200' },
+      { id: 12, name: 'Aceite Sintético 5W-30 Premium + Kit Filtros', category: ['Exclusivo'], price: 120.00, image: 'https://picsum.photos/id/1081/300/200' }
     ];
 
     // ==========================================
@@ -875,7 +1749,7 @@
       return `
         <div class="product-card">
           <div>
-            <img src="${item.image}" alt="${item.name}" class="product-image">
+            <img src="${item.image}" alt="${item.name}" class="product-image" onerror="this.src='https://picsum.photos/id/1078/300/200'">
             <div class="badges-container">${badgesHTML}</div>
             <div class="product-title">${item.name}</div>
           </div>
@@ -973,7 +1847,7 @@
 
       const newUser = data[0];
       localStorage.setItem('sngas_active_session', JSON.stringify(newUser));
-      alert('¡Registro exitoso en la nube! Bienvenido.');
+      alert('¡Registro exitoso! Bienvenido.');
       checkUserSession();
     }
 
@@ -1008,7 +1882,6 @@
       checkUserSession();
     }
 
-    // ACCIÓN DEL BOTÓN MEMBRESÍA (SÓLO ABRE WHATSAPP - NO MODIFICA LA BASE DE DATOS)
     function handleSubscription() {
       const activeUser = JSON.parse(localStorage.getItem('sngas_active_session'));
 
@@ -1044,7 +1917,6 @@
         if (nameDisp) nameDisp.textContent = activeUser.nombre || activeUser.name;
 
         if (supabaseClient && activeUser.id) {
-          // Consulta que incluye la columna 'placa' desde Supabase
           const { data, error } = await supabaseClient
             .from('usuarios')
             .select('regalo, monegas, membresia_activa, tipo_membresia, placa')
@@ -1052,7 +1924,6 @@
             .maybeSingle();
 
           if (data) {
-            // Evaluamos rigurosamente si está activo (debe ser explícitamente true)
             isUserVipActive = data.membresia_activa === true;
 
             // Mostrar/Ocultar y rellenar la Placa
