@@ -813,20 +813,7 @@
           <button class="btn-logout" onclick="handleLogout()">Cerrar Sesión</button>
         </div>
 
-        <!-- RECUADRO BÚSQUEDA CÓDIGOS DE ERROR OBD-II -->
-        <div class="dtc-section">
-          <div class="dtc-header">
-            <h3>🔍 Buscador de Códigos de Falla OBD-II / Check Engine</h3>
-            <p>Ingresa el código que dio el escáner (ejemplo: P0600, P0136, P0171, P0300) para conocer su significado, causas y diagnóstico.</p>
-          </div>
-          <div class="dtc-search-box">
-            <input type="text" id="dtcInput" placeholder="Escribe el código (ej. P0600)" onkeyup="if(event.key==='Enter') searchErrorCode()">
-            <button onclick="searchErrorCode()">Consultar Código</button>
-          </div>
-          <div id="dtcResultContainer" style="display: none;"></div>
-        </div>
-
-        <!-- TARJETA DE MEMBRESÍA VIP SN'GAS -->
+         <!-- TARJETA DE MEMBRESÍA VIP SN'GAS -->
         <div class="reward-card vip-card">
           <div class="reward-header">
             <span class="reward-icon">⭐</span>
@@ -842,6 +829,20 @@
           </div>
         </div>
 
+        <!-- RECUADRO BÚSQUEDA CÓDIGOS DE ERROR OBD-II -->
+        <div class="dtc-section">
+          <div class="dtc-header">
+            <h3>🔍 Buscador de Códigos de Falla OBD-II / Check Engine</h3>
+            <p>Ingresa el código que dio el escáner (ejemplo: P0600, P0136, P0171, P0300) para conocer su significado, causas y diagnóstico.</p>
+          </div>
+          <div class="dtc-search-box">
+            <input type="text" id="dtcInput" placeholder="Escribe el código (ej. P0600)" onkeyup="if(event.key==='Enter') searchErrorCode()">
+            <button onclick="searchErrorCode()">Consultar Código</button>
+          </div>
+          <div id="dtcResultContainer" style="display: none;"></div>
+        </div>
+
+       
         <!-- CONTENEDOR PRINCIPAL DE RECOMPENSAS (MONEGAS Y REGALOS) -->
         <div class="rewards-wrapper">
           
