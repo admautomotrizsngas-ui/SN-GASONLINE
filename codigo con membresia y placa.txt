@@ -800,8 +800,7 @@
       { id: 4, name: 'Recarga GNV Alto Rendimiento', category: ['GNV'], price: 2.10, image: 'https://picsum.photos/id/1073/300/200' },
       { id: 5, name: 'GLP Vehicular (Litro)', category: ['GLP'], price: 7.20, image: 'https://picsum.photos/id/1074/300/200' },
       { id: 6, name: 'Balón GLP Doméstico 10kg', category: ['GLP'], price: 48.00, image: 'https://picsum.photos/id/1075/300/200' },
-      { id: 9, name: 'Filtro de Gas (GNV/GLP)', category: ['GNV', 'GLP'], price: 25.00, image: 'filtro%20de%20gas.jpg' },
-      { id: 9, name: 'Filtro de Gas (GNV/GLP)', category: ['GNV', 'GLP'], price: 25.00, image: 'file:///C:/Users/Usuario/Desktop/tiendaonline/Gemini_Generated_Image_5v67sj5v67sj5v67.jfif' }
+      { id: 9, name: 'Filtro de Gas (GNV/GLP)', category: ['GNV', 'GLP'], price: 25.00, image: 'https://picsum.photos/id/1078/300/200' }
     ];
 
     const services = [
