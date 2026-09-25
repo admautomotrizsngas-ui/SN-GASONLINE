@@ -556,6 +556,30 @@
       color: #92400e;
     }
 
+    /* Tarjeta Certificación Anual VIP */
+    .cert-card {
+      background: linear-gradient(135deg, #052e2b 0%, #064e3b 100%);
+      color: white;
+      border-left: 5px solid #10b981;
+    }
+
+    .cert-card .reward-tag {
+      color: #6ee7b7;
+    }
+
+    .cert-box {
+      background: rgba(0, 0, 0, 0.25);
+      border: 2px solid #10b981;
+      font-size: 1.3rem;
+      font-weight: 800;
+      color: #6ee7b7;
+    }
+
+    .cert-box.cert-alert {
+      border-color: #f87171;
+      color: #fca5a5;
+    }
+
     /* Tarjeta Membresía VIP */
     .vip-card {
       background: linear-gradient(135deg, #1e1b4b 0%, #312e81 100%);
@@ -843,7 +867,7 @@
         </div>
 
        
-        <!-- CONTENEDOR PRINCIPAL DE RECOMPENSAS (MONEGAS Y REGALOS) -->
+        <!-- CONTENEDOR PRINCIPAL DE RECOMPENSAS (MONEGAS, REGALO Y CERTIFICACIÓN) -->
         <div class="rewards-wrapper">
           
           <!-- TARJETA 1: MONEGAS -->
@@ -875,6 +899,22 @@
               </div>
               <p class="reward-footer-text">
                 Muestra este recuadro en caja para reclamar tu promoción.
+              </p>
+            </div>
+          </div>
+
+          <!-- TARJETA 3: PRÓXIMA CERTIFICACIÓN ANUAL (SOLO SOCIOS VIP) -->
+          <div class="reward-card cert-card" id="certCard" style="display: none;">
+            <div class="reward-header">
+              <span class="reward-icon">📅</span>
+              <span class="reward-tag">Próxima Certificación Anual</span>
+            </div>
+            <div class="reward-body">
+              <div class="reward-inner-box cert-box" id="certBox">
+                <span id="userCertDisplay">Sin programar</span>
+              </div>
+              <p class="reward-footer-text" id="certFooterText">
+                Recuerda renovar tu certificación GNV/GLP antes de esta fecha.
               </p>
             </div>
           </div>
@@ -1907,6 +1947,14 @@
       window.open(`https://wa.me/${whatsappNumber}?text=${textMsg}`, '_blank');
     }
 
+    // Formatea una fecha (YYYY-MM-DD o ISO) a un formato legible en español
+    function formatCertDate(rawDate) {
+      if (!rawDate) return null;
+      const d = new Date(rawDate + (rawDate.length === 10 ? 'T00:00:00' : ''));
+      if (isNaN(d.getTime())) return rawDate;
+      return d.toLocaleDateString('es-PE', { day: '2-digit', month: 'long', year: 'numeric' });
+    }
+
     // CONSULTA ESTADO EN TIEMPO REAL DESDE SUPABASE
     async function checkUserSession() {
       const activeUser = JSON.parse(localStorage.getItem('sngas_active_session'));
@@ -1925,7 +1973,7 @@
         if (supabaseClient && activeUser.id) {
           const { data, error } = await supabaseClient
             .from('usuarios')
-            .select('regalo, monegas, membresia_activa, tipo_membresia, placa')
+            .select('regalo, monegas, membresia_activa, tipo_membresia, placa, proxima_certificacion')
             .eq('id', activeUser.id)
             .maybeSingle();
 
@@ -1960,6 +2008,12 @@
             const subText = document.getElementById('subscriptionStatusText');
             const vipWhatsappLink = document.getElementById('vipWhatsappLink');
 
+            // Elementos UI del recuadro de Certificación Anual (solo VIP)
+            const certCard = document.getElementById('certCard');
+            const certBox = document.getElementById('certBox');
+            const certDisplay = document.getElementById('userCertDisplay');
+            const certFooterText = document.getElementById('certFooterText');
+
             if (isUserVipActive) {
               const tipoMembresia = data.tipo_membresia || 'VIP';
               if (subText) subText.textContent = `¡Tu Membresía (${tipoMembresia}) está ACTIVA! Tienes acceso prioritario a auxilio mecánico y atención en taller.`;
@@ -1974,6 +2028,31 @@
               }
               if (exclusiveTitle) exclusiveTitle.style.display = 'block';
               if (exclusiveGrid) exclusiveGrid.style.display = 'grid';
+
+              // Mostrar recuadro de Próxima Certificación Anual (solo VIP)
+              if (certCard) {
+                certCard.style.display = 'flex';
+                const formatted = formatCertDate(data.proxima_certificacion);
+                if (certDisplay) certDisplay.textContent = formatted || 'Sin programar';
+
+                if (formatted) {
+                  const today = new Date();
+                  const certDate = new Date(data.proxima_certificacion + (data.proxima_certificacion.length === 10 ? 'T00:00:00' : ''));
+                  const daysLeft = Math.ceil((certDate - today) / (1000 * 60 * 60 * 24));
+
+                  if (certBox) certBox.classList.toggle('cert-alert', daysLeft <= 30);
+                  if (certFooterText) {
+                    certFooterText.textContent = daysLeft < 0
+                      ? 'Tu certificación venció. Coordina su renovación cuanto antes.'
+                      : daysLeft <= 30
+                        ? `Quedan ${daysLeft} día(s). Coordina tu cita con anticipación.`
+                        : 'Recuerda renovar tu certificación GNV/GLP antes de esta fecha.';
+                  }
+                } else {
+                  if (certBox) certBox.classList.remove('cert-alert');
+                  if (certFooterText) certFooterText.textContent = 'Aún no tienes una fecha programada. Coordina con nosotros por WhatsApp.';
+                }
+              }
             } else {
               if (subText) subText.textContent = 'Actualmente no cuentas con una Membresía VIP activa. Solicítala o renuévala para acceder al servicio de auxilio mecánico nocturno y beneficios exclusivos.';
               if (subBtn) {
@@ -1983,6 +2062,7 @@
               if (vipWhatsappLink) vipWhatsappLink.style.display = 'none';
               if (exclusiveTitle) exclusiveTitle.style.display = 'none';
               if (exclusiveGrid) exclusiveGrid.style.display = 'none';
+              if (certCard) certCard.style.display = 'none';
             }
           }
         }
@@ -1994,6 +2074,9 @@
         
         const plateBox = document.getElementById('vehiclePlateBox');
         if (plateBox) plateBox.style.display = 'none';
+
+        const certCard = document.getElementById('certCard');
+        if (certCard) certCard.style.display = 'none';
 
         isUserVipActive = false;
       }
