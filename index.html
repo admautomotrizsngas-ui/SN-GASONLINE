@@ -404,6 +404,46 @@
       transform: scale(1.03);
     }
 
+    /* BANNER DE PROMOCIONES */
+    .promo-section {
+      background: linear-gradient(135deg, #7c2d12 0%, #9a3412 100%);
+      color: white;
+      padding: 20px;
+      border-radius: 12px;
+      margin: 25px 0;
+      border-left: 5px solid #f97316;
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      flex-wrap: wrap;
+      min-height: 160px;
+    }
+
+    .promo-image {
+      width: 160px;
+      height: 120px;
+      object-fit: cover;
+      border-radius: 8px;
+      flex-shrink: 0;
+    }
+
+    .promo-content {
+      flex: 1;
+      min-width: 200px;
+    }
+
+    .promo-content h3 {
+      font-size: 1.25rem;
+      color: #fed7aa;
+      margin-bottom: 6px;
+    }
+
+    .promo-content p {
+      font-size: 0.92rem;
+      color: #fef3c7;
+      line-height: 1.4;
+    }
+
     /* ESTILOS BÚSQUEDA CÓDIGOS DE ERROR OBD-II */
     .dtc-section {
       background: #0f172a;
@@ -578,6 +618,15 @@
     .cert-box.cert-alert {
       border-color: #f87171;
       color: #fca5a5;
+    }
+
+    .cert-card.cert-urgent {
+      background: linear-gradient(135deg, #450a0a 0%, #7f1d1d 100%);
+      border-left-color: #ef4444;
+    }
+
+    .cert-card.cert-urgent .reward-tag {
+      color: #fecaca;
     }
 
     /* Tarjeta Membresía VIP */
@@ -852,6 +901,9 @@
             </button>
           </div>
         </div>
+
+        <!-- BANNER DE PROMOCIONES -->
+        <div class="promo-section" id="promoBanner"></div>
 
         <!-- RECUADRO BÚSQUEDA CÓDIGOS DE ERROR OBD-II -->
         <div class="dtc-section">
@@ -1734,6 +1786,32 @@
       { id: 3, name: 'Revision de Fluidos', category: ['Exclusivo'], priceText: 'Gratis', image: 'revision%20de%20fuidos.jfif' }
     ];
 
+    // Promociones del banner (edita este arreglo para cambiar la promo activa)
+    const promos = [
+      {
+        title: '🔥 Promoción del mes',
+        subtitle: 'Escríbenos por WhatsApp para conocer nuestras ofertas vigentes en repuestos y servicios GLP/GNV.',
+        image: 'promocion.jfif'
+      }
+    ];
+
+    function renderPromoBanner() {
+      const banner = document.getElementById('promoBanner');
+      if (!banner || promos.length === 0) return;
+      const promo = promos[0];
+      const message = encodeURIComponent(`Hola, quiero más información sobre la promoción: ${promo.title}`);
+      banner.innerHTML = `
+        <img src="${promo.image}" alt="${promo.title}" class="promo-image" onerror="this.src='https://picsum.photos/id/1078/300/200'">
+        <div class="promo-content">
+          <h3>${promo.title}</h3>
+          <p>${promo.subtitle}</p>
+        </div>
+        <a href="https://wa.me/${whatsappNumber}?text=${message}" target="_blank" class="btn-whatsapp" style="width: auto; padding: 0.7rem 1.2rem;">
+          Consultar por WhatsApp
+        </a>
+      `;
+    }
+
     // ==========================================
     // 3. NAVEGACIÓN Y RENDERIZADO
     // ==========================================
@@ -2039,17 +2117,20 @@
                   const today = new Date();
                   const certDate = new Date(data.proxima_certificacion + (data.proxima_certificacion.length === 10 ? 'T00:00:00' : ''));
                   const daysLeft = Math.ceil((certDate - today) / (1000 * 60 * 60 * 24));
+                  const isUrgent = daysLeft <= 30;
 
-                  if (certBox) certBox.classList.toggle('cert-alert', daysLeft <= 30);
+                  if (certBox) certBox.classList.toggle('cert-alert', isUrgent);
+                  if (certCard) certCard.classList.toggle('cert-urgent', isUrgent);
                   if (certFooterText) {
                     certFooterText.textContent = daysLeft < 0
                       ? 'Tu certificación venció. Coordina su renovación cuanto antes.'
-                      : daysLeft <= 30
+                      : isUrgent
                         ? `Quedan ${daysLeft} día(s). Coordina tu cita con anticipación.`
                         : 'Recuerda renovar tu certificación GNV/GLP antes de esta fecha.';
                   }
                 } else {
                   if (certBox) certBox.classList.remove('cert-alert');
+                  if (certCard) certCard.classList.remove('cert-urgent');
                   if (certFooterText) certFooterText.textContent = 'Aún no tienes una fecha programada. Coordina con nosotros por WhatsApp.';
                 }
               }
@@ -2062,7 +2143,10 @@
               if (vipWhatsappLink) vipWhatsappLink.style.display = 'none';
               if (exclusiveTitle) exclusiveTitle.style.display = 'none';
               if (exclusiveGrid) exclusiveGrid.style.display = 'none';
-              if (certCard) certCard.style.display = 'none';
+              if (certCard) {
+                certCard.style.display = 'none';
+                certCard.classList.remove('cert-urgent');
+              }
             }
           }
         }
@@ -2089,6 +2173,7 @@
       renderProducts(products);
       renderServices(services);
       renderExclusive(exclusiveProducts);
+      renderPromoBanner();
 
       const searchEl = document.getElementById('searchInput');
       const catEl = document.getElementById('categorySelect');
