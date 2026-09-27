@@ -1170,11 +1170,20 @@
     const SUPABASE_KEY = 'sb_publishable_atbLcWJhwhFwPC5JCS8qmA_YIRmRUas';
 
     let supabaseClient = null;
-    if (window.supabase && typeof window.supabase.createClient === 'function') {
-      supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-    } else {
-      console.error("No se pudo cargar la librería de Supabase.");
+
+    // Inicializa Supabase con reintentos, por si la librería externa
+    // (cdn.jsdelivr.net) tarda un poco más en cargar que el resto de la página.
+    function initSupabaseClient(retries = 15) {
+      if (window.supabase && typeof window.supabase.createClient === 'function') {
+        supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+        console.log('Supabase conectado correctamente.');
+      } else if (retries > 0) {
+        setTimeout(() => initSupabaseClient(retries - 1), 300);
+      } else {
+        console.error("No se pudo cargar la librería de Supabase. Verifica tu conexión a internet, que no haya un bloqueador de anuncios activo, y que la página se esté sirviendo desde un servidor/hosting real (no abierta como archivo local).");
+      }
     }
+    initSupabaseClient();
 
     const whatsappNumber = "51999999999"; 
 
