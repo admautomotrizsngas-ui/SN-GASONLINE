@@ -2533,9 +2533,11 @@
         if (supabaseClient && activeUser.id) {
           const { data, error } = await supabaseClient
             .from('usuarios')
-            .select('regalo, monegas, membresia_activa, tipo_membresia, placa, proxima_certificacion, km_actual, km_ultimo_mantenimiento_gas, km_ultimo_afinamiento_gasolina, km_ultimo_cambio_aceite, km_ultima_revision_frenos, km_ultima_revision_fluidos, km_ultimo_cambio_bujias, fecha_certificacion_gas, fecha_revision_quinquenal')
+            .select('regalo, monegas, membresia_activa, tipo_membresia, placa, proxima_certificacion')
             .eq('id', activeUser.id)
             .maybeSingle();
+
+          if (error) console.error('Error cargando datos del usuario:', error.message);
 
           if (data) {
             isUserVipActive = data.membresia_activa === true;
