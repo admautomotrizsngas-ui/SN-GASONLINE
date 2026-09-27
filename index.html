@@ -717,6 +717,165 @@
       font-size: 1.3rem;
     }
 
+    /* ========== CALCULADORA DE MANTENIMIENTOS POR KILOMETRAJE ========== */
+    .km-calc-box {
+      background: white;
+      padding: 1.5rem;
+      border-radius: 12px;
+      margin: 20px 0;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+      border-left: 5px solid #0284c7;
+    }
+
+    .km-calc-box h3 {
+      color: #0f172a;
+      margin-bottom: 6px;
+      font-size: 1.2rem;
+    }
+
+    .km-calc-box > p {
+      color: #64748b;
+      font-size: 0.9rem;
+      margin-bottom: 16px;
+    }
+
+    .km-input-row {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      align-items: flex-end;
+      margin-bottom: 18px;
+    }
+
+    .km-input-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      flex: 1;
+      min-width: 200px;
+    }
+
+    .km-input-group label {
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: #334155;
+    }
+
+    .km-input-group input[type="number"] {
+      padding: 0.65rem 0.8rem;
+      border: 1px solid #cbd5e1;
+      border-radius: 6px;
+      font-size: 1rem;
+    }
+
+    .btn-calcular {
+      width: auto;
+      margin-top: 0;
+      padding: 0.65rem 1.6rem;
+      background-color: #0284c7;
+      white-space: nowrap;
+    }
+
+    .btn-calcular:hover {
+      background-color: #0369a1;
+    }
+
+    .maintenance-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+      gap: 14px;
+    }
+
+    .maint-card {
+      border-radius: 10px;
+      padding: 16px;
+      border-left: 5px solid #94a3b8;
+      background: #f8fafc;
+    }
+
+    .maint-card-header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+
+    .maint-icon {
+      font-size: 1.3rem;
+    }
+
+    .maint-title {
+      font-weight: 700;
+      font-size: 0.92rem;
+      color: #0f172a;
+    }
+
+    .maint-status-badge {
+      display: inline-block;
+      font-size: 0.72rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      padding: 2px 10px;
+      border-radius: 12px;
+      margin-bottom: 8px;
+      background: #94a3b8;
+      color: white;
+    }
+
+    .maint-detail {
+      font-size: 0.85rem;
+      color: #475569;
+      line-height: 1.4;
+    }
+
+    .maint-card.status-green {
+      border-left-color: #16a34a;
+      background: #f0fdf4;
+    }
+    .maint-card.status-green .maint-status-badge {
+      background: #16a34a;
+    }
+
+    .maint-card.status-yellow {
+      border-left-color: #eab308;
+      background: #fefce8;
+    }
+    .maint-card.status-yellow .maint-status-badge {
+      background: #eab308;
+      color: #422006;
+    }
+
+    .maint-card.status-red {
+      border-left-color: #ef4444;
+      background: #fef2f2;
+    }
+    .maint-card.status-red .maint-status-badge {
+      background: #ef4444;
+    }
+
+    .maint-card.status-gray .maint-status-badge {
+      background: #94a3b8;
+    }
+
+    .date-maintenance-block {
+      margin-top: 22px;
+      padding-top: 18px;
+      border-top: 2px dashed #e2e8f0;
+    }
+
+    .date-maintenance-block h4 {
+      color: #0f172a;
+      font-size: 1rem;
+      margin-bottom: 4px;
+    }
+
+    .date-maintenance-block > p {
+      color: #64748b;
+      font-size: 0.85rem;
+      margin-bottom: 14px;
+    }
+
     @media (max-width: 768px) {
       header {
         flex-direction: column;
@@ -902,6 +1061,26 @@
           </div>
         </div>
 
+        <!-- CALCULADORA DE MANTENIMIENTOS POR KILOMETRAJE -->
+        <div class="km-calc-box">
+          <h3>🚗 Calculadora de Mantenimientos</h3>
+          <p>Ingresa el kilometraje actual de tu vehículo y presiona "Calcular" para ver el estado de tus próximos mantenimientos.</p>
+          <div class="km-input-row">
+            <div class="km-input-group">
+              <label for="kmActualInput">Kilometraje actual</label>
+              <input type="number" id="kmActualInput" placeholder="Ej. 45000" min="0">
+            </div>
+            <button type="button" class="btn-submit btn-calcular" onclick="calcularMantenimientos()">Calcular</button>
+          </div>
+          <div id="maintenanceGrid" class="maintenance-grid"></div>
+
+          <div class="date-maintenance-block">
+            <h4>📅 Certificaciones y Revisiones por Fecha</h4>
+            <p>Estos trámites se controlan por fecha exacta (no por kilometraje).</p>
+            <div id="dateMaintenanceGrid" class="maintenance-grid"></div>
+          </div>
+        </div>
+
         <!-- BANNER DE PROMOCIONES -->
         <div class="promo-section" id="promoBanner"></div>
 
@@ -1001,6 +1180,40 @@
 
     // Estado local de la membresía
     let isUserVipActive = false;
+
+    // ==========================================
+    // CONFIGURACIÓN DE MANTENIMIENTOS POR KILOMETRAJE
+    // ==========================================
+    // "interval": km recomendados entre cada servicio.
+    // "warning": a cuántos km antes de vencer se pone en AMARILLO.
+    // Puedes ajustar estos valores según lo que uses en el taller.
+    const KM_MAINTENANCE_CONFIG = [
+      { key: 'mantenimiento_gas',    label: 'Mantenimiento de Gas (GNV/GLP)', icon: '⛽', interval: 5000,  warning: 1000 },
+      { key: 'afinamiento_gasolina', label: 'Afinamiento de Gasolina',        icon: '🔧', interval: 10000, warning: 1500 },
+      { key: 'cambio_aceite',        label: 'Cambio de Aceite',               icon: '🛢️', interval: 5000,  warning: 500  },
+      { key: 'revision_frenos',      label: 'Revisión de Frenos',             icon: '🛑', interval: 10000, warning: 1500 },
+      { key: 'revision_fluidos',     label: 'Revisión de Fluidos',            icon: '💧', interval: 10000, warning: 1500 },
+      { key: 'cambio_bujias',        label: 'Cambio de Bujías',               icon: '🔥', interval: 20000, warning: 2000 }
+    ];
+
+    // ==========================================
+    // CONFIGURACIÓN DE MANTENIMIENTOS POR FECHA
+    // ==========================================
+    // Estos NO se calculan con kilometraje, sino con una fecha exacta que tú
+    // registras en Supabase (la fecha en que vence/corresponde el trámite).
+    // "warningDays": cuántos días antes de la fecha se pone en AMARILLO.
+    const DATE_MAINTENANCE_CONFIG = [
+      { key: 'certificacion_gas',    label: 'Certificación de Gas',    icon: '📋', warningDays: 30 },
+      { key: 'revision_quinquenal',  label: 'Revisión Quinquenal',     icon: '🗓️', warningDays: 60 }
+    ];
+
+    // Guarda, por usuario, el kilometraje en el que se hizo el último servicio de cada tipo.
+    // Se rellena desde Supabase en checkUserSession().
+    let userMaintenanceData = {};
+
+    // Guarda, por usuario, la fecha programada de cada mantenimiento por fecha.
+    // Se rellena desde Supabase en checkUserSession().
+    let userDateMaintenanceData = {};
 
     // ==========================================
     // Base de Datos de Códigos de Falla OBD-II
@@ -2122,6 +2335,177 @@
       return d.toLocaleDateString('es-PE', { day: '2-digit', month: 'long', year: 'numeric' });
     }
 
+    // ==========================================
+    // CALCULADORA DE MANTENIMIENTOS POR KILOMETRAJE
+    // ==========================================
+
+    // Dibuja una tarjeta "sin datos" para cada tipo de mantenimiento por km (estado inicial)
+    function renderMaintenancePlaceholders() {
+      const grid = document.getElementById('maintenanceGrid');
+      if (!grid) return;
+      grid.innerHTML = KM_MAINTENANCE_CONFIG.map(item => `
+        <div class="maint-card status-gray">
+          <div class="maint-card-header">
+            <span class="maint-icon">${item.icon}</span>
+            <span class="maint-title">${item.label}</span>
+          </div>
+          <span class="maint-status-badge">Pendiente</span>
+          <p class="maint-detail">Ingresa tu kilometraje actual y presiona "Calcular".</p>
+        </div>
+      `).join('');
+    }
+
+    // Construye el HTML de una tarjeta individual (por km) según el estado (verde/amarillo/rojo/gris)
+    function buildMaintenanceCard(item, kmActual) {
+      const kmUltimoServicio = userMaintenanceData[item.key];
+
+      // Si no hay un último servicio registrado en la base de datos para este ítem
+      if (kmUltimoServicio === null || kmUltimoServicio === undefined || kmUltimoServicio === '') {
+        return `
+          <div class="maint-card status-gray">
+            <div class="maint-card-header">
+              <span class="maint-icon">${item.icon}</span>
+              <span class="maint-title">${item.label}</span>
+            </div>
+            <span class="maint-status-badge">Sin datos</span>
+            <p class="maint-detail">Aún no tenemos registrado tu último servicio. Solicítalo en tu próxima visita a SN'GAS.</p>
+          </div>
+        `;
+      }
+
+      const kmRecorridos = kmActual - Number(kmUltimoServicio);
+      const kmRestante = item.interval - kmRecorridos;
+
+      let statusClass, statusLabel, detail;
+
+      if (kmRestante <= 0) {
+        statusClass = 'status-red';
+        statusLabel = 'Vencido';
+        detail = `Vencido hace ${Math.abs(kmRestante).toLocaleString('es-PE')} km. Te recomendamos coordinarlo cuanto antes.`;
+      } else if (kmRestante <= item.warning) {
+        statusClass = 'status-yellow';
+        statusLabel = 'Próximo';
+        detail = `Faltan ${kmRestante.toLocaleString('es-PE')} km. Empieza a coordinar este mantenimiento.`;
+      } else {
+        statusClass = 'status-green';
+        statusLabel = 'Al día';
+        detail = `Faltan ${kmRestante.toLocaleString('es-PE')} km para este mantenimiento.`;
+      }
+
+      return `
+        <div class="maint-card ${statusClass}">
+          <div class="maint-card-header">
+            <span class="maint-icon">${item.icon}</span>
+            <span class="maint-title">${item.label}</span>
+          </div>
+          <span class="maint-status-badge">${statusLabel}</span>
+          <p class="maint-detail">${detail}</p>
+        </div>
+      `;
+    }
+
+    // Se ejecuta al presionar el botón "Calcular"
+    function calcularMantenimientos() {
+      const kmInput = document.getElementById('kmActualInput');
+      const grid = document.getElementById('maintenanceGrid');
+      if (!kmInput || !grid) return;
+
+      const kmActual = parseInt(kmInput.value, 10);
+
+      if (isNaN(kmActual) || kmActual < 0) {
+        alert('Por favor ingresa un kilometraje válido.');
+        return;
+      }
+
+      grid.innerHTML = KM_MAINTENANCE_CONFIG.map(item => buildMaintenanceCard(item, kmActual)).join('');
+
+      // Guarda el kilometraje ingresado para que la próxima vez que el cliente
+      // entre a su cuenta, la calculadora ya aparezca resuelta.
+      saveKmActual(kmActual);
+    }
+
+    // Guarda el kilometraje actual del usuario en Supabase (columna "km_actual")
+    async function saveKmActual(kmActual) {
+      const activeUser = JSON.parse(localStorage.getItem('sngas_active_session'));
+      if (!supabaseClient || !activeUser || !activeUser.id) return;
+
+      const { error } = await supabaseClient
+        .from('usuarios')
+        .update({ km_actual: kmActual })
+        .eq('id', activeUser.id);
+
+      if (error) {
+        console.error('No se pudo guardar el kilometraje actual:', error.message);
+      }
+    }
+
+    // ==========================================
+    // MANTENIMIENTOS QUE SE MIDEN POR FECHA (no por km)
+    // ==========================================
+
+    // Calcula el estado (verde/amarillo/rojo/gris) de un mantenimiento a partir
+    // de una fecha exacta guardada en Supabase (no depende del kilometraje).
+    function computeDateMaintenanceStatus(rawDate, warningDays) {
+      if (!rawDate) {
+        return {
+          statusClass: 'status-gray',
+          statusLabel: 'Sin datos',
+          detail: 'Aún no tenemos una fecha programada para este trámite. Consúltanos por WhatsApp.'
+        };
+      }
+
+      const formatted = formatCertDate(rawDate);
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      const targetDate = new Date(rawDate + (rawDate.length === 10 ? 'T00:00:00' : ''));
+      const daysLeft = Math.ceil((targetDate - today) / (1000 * 60 * 60 * 24));
+
+      if (daysLeft < 0) {
+        return {
+          statusClass: 'status-red',
+          statusLabel: 'Vencido',
+          detail: `Venció el ${formatted} (hace ${Math.abs(daysLeft)} día(s)). Coordina su renovación cuanto antes.`
+        };
+      } else if (daysLeft <= warningDays) {
+        return {
+          statusClass: 'status-yellow',
+          statusLabel: 'Próximo',
+          detail: `Vence el ${formatted}. Quedan ${daysLeft} día(s).`
+        };
+      } else {
+        return {
+          statusClass: 'status-green',
+          statusLabel: 'Al día',
+          detail: `Vence el ${formatted}. Quedan ${daysLeft} día(s).`
+        };
+      }
+    }
+
+    // Construye el HTML de una tarjeta individual (por fecha)
+    function buildDateMaintenanceCard(item) {
+      const rawDate = userDateMaintenanceData[item.key];
+      const { statusClass, statusLabel, detail } = computeDateMaintenanceStatus(rawDate, item.warningDays);
+
+      return `
+        <div class="maint-card ${statusClass}">
+          <div class="maint-card-header">
+            <span class="maint-icon">${item.icon}</span>
+            <span class="maint-title">${item.label}</span>
+          </div>
+          <span class="maint-status-badge">${statusLabel}</span>
+          <p class="maint-detail">${detail}</p>
+        </div>
+      `;
+    }
+
+    // Dibuja todas las tarjetas de mantenimientos por fecha (se actualiza solo,
+    // no depende de que el cliente ingrese nada, ya que la fecha la fijas tú).
+    function renderDateMaintenanceCards() {
+      const grid = document.getElementById('dateMaintenanceGrid');
+      if (!grid) return;
+      grid.innerHTML = DATE_MAINTENANCE_CONFIG.map(item => buildDateMaintenanceCard(item)).join('');
+    }
+
     // CONSULTA ESTADO EN TIEMPO REAL DESDE SUPABASE
     async function checkUserSession() {
       const activeUser = JSON.parse(localStorage.getItem('sngas_active_session'));
@@ -2140,7 +2524,7 @@
         if (supabaseClient && activeUser.id) {
           const { data, error } = await supabaseClient
             .from('usuarios')
-            .select('regalo, monegas, membresia_activa, tipo_membresia, placa, proxima_certificacion')
+            .select('regalo, monegas, membresia_activa, tipo_membresia, placa, proxima_certificacion, km_actual, km_ultimo_mantenimiento_gas, km_ultimo_afinamiento_gasolina, km_ultimo_cambio_aceite, km_ultima_revision_frenos, km_ultima_revision_fluidos, km_ultimo_cambio_bujias, fecha_certificacion_gas, fecha_revision_quinquenal')
             .eq('id', activeUser.id)
             .maybeSingle();
 
@@ -2168,6 +2552,31 @@
             const giftDisplay = document.getElementById('userGiftDisplay');
             if (giftDisplay) {
               giftDisplay.textContent = data.regalo || '¡Bienvenido! Reclama tus promociones en estación.';
+            }
+
+            // Cargar los datos de mantenimiento por kilometraje (kilometraje del último servicio de cada tipo)
+            userMaintenanceData = {
+              mantenimiento_gas: data.km_ultimo_mantenimiento_gas,
+              afinamiento_gasolina: data.km_ultimo_afinamiento_gasolina,
+              cambio_aceite: data.km_ultimo_cambio_aceite,
+              revision_frenos: data.km_ultima_revision_frenos,
+              revision_fluidos: data.km_ultima_revision_fluidos,
+              cambio_bujias: data.km_ultimo_cambio_bujias
+            };
+
+            // Cargar los datos de mantenimiento por fecha (fecha exacta de vencimiento)
+            userDateMaintenanceData = {
+              certificacion_gas: data.fecha_certificacion_gas,
+              revision_quinquenal: data.fecha_revision_quinquenal
+            };
+            renderDateMaintenanceCards();
+
+            const kmInput = document.getElementById('kmActualInput');
+            if (kmInput && data.km_actual !== null && data.km_actual !== undefined) {
+              kmInput.value = data.km_actual;
+              calcularMantenimientos();
+            } else {
+              renderMaintenancePlaceholders();
             }
 
             // Elementos UI de la Membresía VIP
@@ -2250,6 +2659,15 @@
 
         const certCard = document.getElementById('certCard');
         if (certCard) certCard.style.display = 'none';
+
+        const kmInput = document.getElementById('kmActualInput');
+        if (kmInput) kmInput.value = '';
+        const maintGrid = document.getElementById('maintenanceGrid');
+        if (maintGrid) maintGrid.innerHTML = '';
+        const dateMaintGrid = document.getElementById('dateMaintenanceGrid');
+        if (dateMaintGrid) dateMaintGrid.innerHTML = '';
+        userMaintenanceData = {};
+        userDateMaintenanceData = {};
 
         isUserVipActive = false;
       }
