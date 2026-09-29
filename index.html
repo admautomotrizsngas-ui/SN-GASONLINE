@@ -1083,7 +1083,7 @@
 
           <!-- Modo Registrado (Placa SOLO LECTURA) -->
           <div id="plateDisplayContainer" class="plate-registered-badge" style="display: none;">
-            <span class="plate-label">🚗 PLACA:</span>
+            <span class="plate-label">🚗 VEHÍCULO:</span>
             <span id="userPlateDisplay" class="plate-number">------</span>
           </div>
         </div>
@@ -1215,7 +1215,7 @@
 
   <script>
     // ==========================================
-    // 1. CONFIGURACIÓN DE SUPABASE
+    // 1. CONFIGURACIÓN DE SUPABASE Y NÚMERO DE WHATSAPP
     // ==========================================
     const SUPABASE_URL = 'https://pcpcbdraksmlobfrhrpk.supabase.co';
     const SUPABASE_KEY = 'sb_publishable_atbLcWJhwhFwPC5JCS8qmA_YIRmRUas';
@@ -1234,13 +1234,13 @@
     }
     initSupabaseClient();
 
-    const whatsappNumber = "51999999999"; 
+    const whatsappNumber = "51901939637"; 
     let isUserVipActive = false;
 
     // CONFIGURACIÓN MANTENIMIENTOS POR KILOMETRAJE
     const KM_MAINTENANCE_CONFIG = [
       { key: 'mantenimiento_gas',    label: 'Mantenimiento de Gas (GNV/GLP)', icon: '⛽', interval: 20000,  warning: 20000 },
-      { key: 'cambio_aceite',        label: 'Cambio de Aceite',               icon: '🛢️', interval: 5000,  warning: 5000 },
+      { key: 'cambio_aceite',        label: 'Cambio de Aceite',               icon: '🛢️️', interval: 5000,  warning: 5000 },
       { key: 'afinamiento_gasolina', label: 'Afinamiento de Gasolina',        icon: '🔧', interval: 10000, warning: 10000 },
       { key: 'revision_frenos',      label: 'Revisión de Frenos',             icon: '🛑', interval: 10000, warning: 10000 },
       { key: 'revision_fluidos',     label: 'Revisión de Fluidos',            icon: '💧', interval: 10000, warning: 10000 },
@@ -1258,7 +1258,6 @@
 
     // Base de Datos Ampliada de Códigos de Falla OBD-II
     const dtcDatabase = {
-      // SENSORES DE AIRE Y COMBUSTIBLE (P0100 - P0199)
       "P0100": {
         title: "P0100 - Falla en el Circuito del Sensor MAF (Flujo de Aire)",
         description: "La ECU detecta una falla en la señal o circuito eléctrico del sensor de flujo de masa de aire.",
@@ -1355,8 +1354,6 @@
         causes: ["Presión excesiva en el reductor de gas/gasolina.", "Inyector abierto o goteando.", "Filtro de aire obstruido."],
         consequences: ["Humo negro.", "Olor fuerte a combustible/gas.", "Bujías ahumadas."]
       },
-
-      // SISTEMA DE ENCENDIDO Y MISFIRES (P0300 - P0399)
       "P0300": {
         title: "P0300 - Fallo de Encendido Múltiple",
         description: "Detonaciones a destiempo o saltos de chispa erráticos en varios cilindros simultáneamente.",
@@ -1399,8 +1396,6 @@
         causes: ["Sensor CMP dañado.", "Falso contacto.", "Cadena o faja de distribución fuera de punto."],
         consequences: ["Dificultad para encender.", "Consumo alto.", "Pérdida de potencia."]
       },
-
-      // CONTROLES DE EMISIONES Y EVAP (P0400 - P0499)
       "P0401": {
         title: "P0401 - Flujo Insuficiente en Sistema EGR",
         description: "No está ingresando la cantidad esperada de gases de escape a la admisión para enfriar la combustión.",
@@ -1425,8 +1420,6 @@
         causes: ["Tapa del tanque de gasolina floja o con empaque roto.", "Manguera EVAP agrietada."],
         consequences: ["Luz Check Engine encendida."]
       },
-
-      // COMPUTADORA, SENSORES Y RED CAN BUS (P0500 - P0700 / U0000 - U0400)
       "P0500": {
         title: "P0500 - Falla en Sensor de Velocidad del Vehículo (VSS)",
         description: "La ECU no recibe la señal sobre la velocidad de marcha de las ruedas.",
@@ -1457,8 +1450,6 @@
         causes: ["Problema interno en caja de cambios.", "Sensor de velocidad de turbina defectuoso."],
         consequences: ["Caja bloqueada en 3ra marcha (Limp Mode).", "Golpes bruscos al pasar cambios."]
       },
-
-      // CÓDIGOS DE CHASIS (ABS, DIRECCIÓN) Y CARROCERÍA (C0000 / B0000)
       "C0110": {
         title: "C0110 - Circuito del Motor de la Bomba del ABS",
         description: "Falla en el motor de la bomba hidráulica de los frenos ABS.",
@@ -1525,6 +1516,20 @@
         `;
       }
       container.style.display = 'block';
+    }
+
+    // REDIRECCIÓN A WHATSAPP AL SOLICITAR/RENOVAR MEMBRESÍA VIP
+    function handleSubscription() {
+      const activeUser = JSON.parse(localStorage.getItem('sngas_active_session'));
+      
+      const userName = activeUser ? (activeUser.nombre || activeUser.email) : 'Cliente';
+      const userPlate = (activeUser && activeUser.placa) ? activeUser.placa : 'No registrada';
+
+      const message = `Hola SN'GAS ONLINE, mi nombre es *${userName}* (Placa: *${userPlate}*). Deseo solicitar / renovar mi *Membresía VIP* para acceder a auxilio mecánico nocturno y beneficios exclusivos.`;
+      
+      const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(message)}`;
+      
+      window.open(whatsappUrl, '_blank');
     }
 
     // CATÁLOGO
