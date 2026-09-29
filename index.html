@@ -355,32 +355,96 @@
       flex-wrap: wrap;
     }
 
-    .plate-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
+    /* RECUADRO SUPERIOR DE PLACA DINÁMICO */
+    .plate-top-box {
+      margin-bottom: 1.5rem;
       background-color: #0f172a;
-      color: #f8fafc;
-      border: 2px solid #cbd5e1;
-      padding: 4px 10px;
-      border-radius: 6px;
-      font-family: 'Courier New', Courier, monospace;
-      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      border: 1px solid #334155;
+      padding: 1rem;
+      border-radius: 10px;
+      color: white;
     }
 
-    .plate-label {
-      font-size: 0.75rem;
+    .plate-form-container {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .plate-form-container label {
+      font-size: 0.85rem;
+      font-weight: bold;
+      color: #94a3b8;
+    }
+
+    .plate-input-wrapper {
+      display: flex;
+      gap: 8px;
+      flex: 1;
+      max-width: 320px;
+    }
+
+    .plate-input-wrapper input {
+      width: 100%;
+      background-color: #1e293b;
+      border: 1px solid #475569;
+      color: #f59e0b;
+      font-family: 'Courier New', Courier, monospace;
+      font-size: 1.1rem;
+      font-weight: 800;
+      text-align: center;
+      padding: 0.5rem;
+      border-radius: 6px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      outline: none;
+    }
+
+    .plate-input-wrapper input:focus {
+      border-color: #f59e0b;
+    }
+
+    .btn-save-plate {
+      background-color: #eab308;
+      color: #0f172a;
+      border: none;
+      padding: 0.5rem 1rem;
+      border-radius: 6px;
+      font-weight: 800;
+      cursor: pointer;
+      font-size: 0.9rem;
+      white-space: nowrap;
+      transition: background-color 0.2s;
+    }
+
+    .btn-save-plate:hover {
+      background-color: #fde047;
+    }
+
+    .plate-registered-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      background-color: #1e293b;
+      border: 2px solid #334155;
+      padding: 8px 16px;
+      border-radius: 8px;
+    }
+
+    .plate-registered-badge .plate-label {
+      font-size: 0.8rem;
       color: #94a3b8;
       font-weight: 700;
       letter-spacing: 0.5px;
     }
 
-    .plate-number {
-      font-size: 1rem;
+    .plate-registered-badge .plate-number {
+      font-size: 1.2rem;
       font-weight: 800;
       color: #f59e0b;
-      letter-spacing: 1px;
-      text-transform: uppercase;
+      font-family: 'Courier New', Courier, monospace;
+      letter-spacing: 2px;
     }
 
     .btn-vip-whatsapp {
@@ -869,6 +933,13 @@
       .dtc-search-box {
         flex-direction: column;
       }
+      .plate-form-container {
+        flex-direction: column;
+        align-items: stretch;
+      }
+      .plate-input-wrapper {
+        max-width: 100%;
+      }
     }
   </style>
 </head>
@@ -998,15 +1069,29 @@
 
       <!-- DASHBOARD CLIENTE -->
       <div class="user-dashboard" id="userDashboard" style="display: none;">
+        
+        <!-- RECUADRO DEDICADO A LA PLACA EN LA PARTE SUPERIOR -->
+        <div class="plate-top-box">
+          <!-- Modo Registro (Placa NO guardada aún) -->
+          <div id="plateInputContainer" class="plate-form-container" style="display: none;">
+            <label for="userPlateInput">REGISTRA TU VEHÍCULO:</label>
+            <div class="plate-input-wrapper">
+              <input type="text" id="userPlateInput" placeholder="ABC123" maxlength="6" oninput="this.value = this.value.toUpperCase().replace(/[^A-Z0-9]/g, '')">
+              <button type="button" class="btn-save-plate" onclick="handleSavePlate()">Guardar Placa</button>
+            </div>
+          </div>
+
+          <!-- Modo Registrado (Placa SOLO LECTURA) -->
+          <div id="plateDisplayContainer" class="plate-registered-badge" style="display: none;">
+            <span class="plate-label">🚗 VEHÍCULO:</span>
+            <span id="userPlateDisplay" class="plate-number">------</span>
+          </div>
+        </div>
+
         <div class="dashboard-header">
           <div>
             <div class="user-greeting-container">
               <h2>Bienvenido, <span id="userNameDisplay">Cliente</span> 👋</h2>
-              
-              <div id="vehiclePlateBox" class="plate-badge" style="display: none;">
-                <span class="plate-label">PLACA:</span>
-                <span id="userPlateDisplay" class="plate-number">---</span>
-              </div>
 
               <a id="vipWhatsappLink" href="#" target="_blank" class="btn-vip-whatsapp" style="display: none;">
                 💬 Soporte VIP WhatsApp
@@ -1082,7 +1167,7 @@
           </div>
         </div>
 
-        <!-- CALCULADORA DE MANTENIMIENTOS POR KILOMETRAJE (UBICADA DEBAJO DE RECOMPENSAS / BENEFICIO EXCLUSIVO) -->
+        <!-- CALCULADORA DE MANTENIMIENTOS POR KILOMETRAJE -->
         <div class="km-calc-box">
           <h3>🚗 Calculadora de Mantenimientos</h3>
           <p>Ingresa el kilometraje actual de tu vehículo y presiona "Calcular" para ver el estado de tus próximos mantenimientos.</p>
@@ -1109,10 +1194,10 @@
         <div class="dtc-section">
           <div class="dtc-header">
             <h3>🔍 Buscador de Códigos de Falla OBD-II / Check Engine</h3>
-            <p>Ingresa el código que dio el escáner (ejemplo: P0600, P0136, P0171, P0300) para conocer su significado, causas y diagnóstico.</p>
+            <p>Ingresa el código que dio el escáner (ejemplo: P0100, P0136, P0171, P0300, P0600, C0110) para conocer su significado, causas y diagnóstico.</p>
           </div>
           <div class="dtc-search-box">
-            <input type="text" id="dtcInput" placeholder="Escribe el código (ej. P0600)" onkeyup="if(event.key==='Enter') searchErrorCode()">
+            <input type="text" id="dtcInput" placeholder="Escribe el código (ej. P0300)" onkeyup="if(event.key==='Enter') searchErrorCode()">
             <button onclick="searchErrorCode()">Consultar Código</button>
           </div>
           <div id="dtcResultContainer" style="display: none;"></div>
@@ -1171,13 +1256,80 @@
     let userMaintenanceData = {};
     let userDateMaintenanceData = {};
 
-    // Base de Datos de Códigos de Falla OBD-II
+    // Base de Datos Ampliada de Códigos de Falla OBD-II
     const dtcDatabase = {
+      // SENSORES DE AIRE Y COMBUSTIBLE (P0100 - P0199)
       "P0100": {
         title: "P0100 - Falla en el Circuito del Sensor MAF (Flujo de Aire)",
         description: "La ECU detecta una falla en la señal o circuito eléctrico del sensor de flujo de masa de aire.",
         causes: ["Sensor MAF sucio, contaminado o averiado.", "Conector suelto o cableado roto.", "Fuga de aire en la admisión."],
         consequences: ["Luz Check Engine encendida.", "Inestabilidad en mínimo y joneo.", "Alto consumo de combustible."]
+      },
+      "P0101": {
+        title: "P0101 - Rango / Desempeño del Sensor MAF",
+        description: "La lectura de entrada de aire no coincide con los valores esperados por la computadora del motor según las RPM.",
+        causes: ["Sensor MAF sucio.", "Filtro de aire tapado.", "Fugas de vacío importantes tras el MAF."],
+        consequences: ["Falta de potencia al acelerar.", "Humo negro por el escape.", "Marcha mínima inestable."]
+      },
+      "P0102": {
+        title: "P0102 - Entrada Baja del Sensor MAF",
+        description: "La señal devuelta por el sensor MAF hacia la ECU es inferior a 0.2 voltios.",
+        causes: ["Sensor defectuoso.", "Cable de señal cortado a masa.", "Filtro de aire obstruido."],
+        consequences: ["El motor se apaga en mínimo.", "Respuesta lenta del acelerador."]
+      },
+      "P0103": {
+        title: "P0103 - Entrada Alta del Sensor MAF",
+        description: "La señal entregada por el sensor MAF hacia la ECU es superior a 4.9 voltios continuos.",
+        causes: ["Cortocircuito a positivo en el arnés.", "Masa del sensor desconectada.", "Sensor MAF averiado."],
+        consequences: ["Consumo excesivo de gasolina o gas.", "Mezcla extremadamente rica."]
+      },
+      "P0105": {
+        title: "P0105 - Falla en Circuito Sensor MAP (Presión Absoluta del Múltiple)",
+        description: "Falla eléctrica general en la línea del sensor MAP.",
+        causes: ["Manguera de vacío del sensor MAP rota o zafada.", "Sensor MAP quemado.", "Cableado dañado."],
+        consequences: ["El motor se ahoga al acelerar.", "Humo negro y explosiones por el escape."]
+      },
+      "P0106": {
+        title: "P0106 - Rango / Desempeño del Sensor MAP",
+        description: "El voltaje entregado por el sensor MAP no guarda coherencia con la apertura de la mariposa.",
+        causes: ["Obstrucción en toma de vacío.", "Múltiple de admisión picado o rajado.", "Sensor MAP descalibrado."],
+        consequences: ["Perdida repentina de potencia.", "Marcha inestable en ralentí."]
+      },
+      "P0110": {
+        title: "P0110 - Circuito del Sensor IAT (Temperatura de Aire de Admisión)",
+        description: "Problema en el circuito del sensor que mide la temperatura del aire que entra al motor.",
+        causes: ["Sensor IAT averiado.", "Conector sulfatado.", "Cable de señal roto."],
+        consequences: ["Dificultad para encender en frío.", "Mezcla fuera de parámetro."]
+      },
+      "P0115": {
+        title: "P0115 - Falla en Circuito del Sensor ECT (Temperatura del Refrigerante)",
+        description: "La computadora no recibe una medición válida de la temperatura de motor.",
+        causes: ["Sensor de temperatura de refrigerante averiado.", "Termostato trabado en abierto.", "Conector del ECT flojo."],
+        consequences: ["Electroventilador encendido directo.", "Dificultad de arranque en frío.", "Elevado consumo."]
+      },
+      "P0120": {
+        title: "P0120 - Falla en Circuito del Sensor TPS (Posición del Acelerador)",
+        description: "Interrupción o distorsión en la señal emitida por la pista A del potenciómetro de la mariposa.",
+        causes: ["Sensor TPS desgastado.", "Cuerpo de aceleración sucio o descalibrado.", "Arnés con falso contacto."],
+        consequences: ["Aceleración a jalones.", "El motor no responde al pisar el pedal."]
+      },
+      "P0130": {
+        title: "P0130 - Falla Circuito Sensor de Oxígeno (Banco 1, Sensor 1)",
+        description: "Falla eléctrica primaria en el sensor de oxígeno ubicado antes del catalizador.",
+        causes: ["Sensor contaminado con aceite o refrigerante.", "Línea de señal rota.", "Calentador del sensor quemado."],
+        consequences: ["Luz Check Engine encendida.", "Consumo elevado de combustible."]
+      },
+      "P0133": {
+        title: "P0133 - Sensor de Oxígeno Respuesta Lenta (Banco 1, Sensor 1)",
+        description: "El sensor tarda demasiado tiempo en alternar sus mediciones entre mezcla rica y pobre.",
+        causes: ["Sensor de oxígeno agotado o con hollín.", "Fuga en el múltiple de escape.", "Inyectores goteando."],
+        consequences: ["Emisión excesiva de gases.", "Ligera pérdida de rendimiento."]
+      },
+      "P0135": {
+        title: "P0135 - Falla en el Calentador del Sensor de Oxígeno (Banco 1, Sensor 1)",
+        description: "La resistencia interna del sensor de oxígeno encargada de calentarlo rápidamente no funciona.",
+        causes: ["Resistencia del sensor abierta.", "Fusible del sensor fundido.", "Relé defectuoso."],
+        consequences: ["Demora prolongada para entrar en bucle cerrado (Closed Loop).", "Exceso de consumo en los primeros minutos."]
       },
       "P0136": {
         title: "P0136 - Falla en Sensor de Oxígeno (Banco 1, Sensor 2)",
@@ -1185,17 +1337,107 @@
         causes: ["Sensor desgastado.", "Cableado quemado por el escape.", "Mezcla descompensada en GLP/GNV."],
         consequences: ["Aumento en consumo.", "Luz Check Engine encendida."]
       },
+      "P0141": {
+        title: "P0141 - Falla en Calentador del Sensor de Oxígeno (Banco 1, Sensor 2)",
+        description: "Falla en la resistencia de calentamiento del sensor de oxígeno secundario.",
+        causes: ["Sensor trasero dañado.", "Arnés roto bajo la carrocería.", "Fusible maestro de sensores quemado."],
+        consequences: ["Luz Check Engine fija.", "Fallo en pruebas de emisiones."]
+      },
       "P0171": {
         title: "P0171 - Mezcla Demasiado Pobre (Banco 1)",
         description: "Exceso de aire o falta de combustible.",
         causes: ["Entrada de aire no medida.", "Inyectores obstruidos.", "Filtro de gas o regulador sucio."],
         consequences: ["Joneo, detonaciones y recalentamiento de válvulas."]
       },
+      "P0172": {
+        title: "P0172 - Mezcla Demasiado Rica (Banco 1)",
+        description: "Exceso de combustible o falta de aire ingresando a la cámara de combustión.",
+        causes: ["Presión excesiva en el reductor de gas/gasolina.", "Inyector abierto o goteando.", "Filtro de aire obstruido."],
+        consequences: ["Humo negro.", "Olor fuerte a combustible/gas.", "Bujías ahumadas."]
+      },
+
+      // SISTEMA DE ENCENDIDO Y MISFIRES (P0300 - P0399)
       "P0300": {
         title: "P0300 - Fallo de Encendido Múltiple",
-        description: "Detonaciones a destiempo o saltos de chispa erráticos.",
+        description: "Detonaciones a destiempo o saltos de chispa erráticos en varios cilindros simultáneamente.",
         causes: ["Bujías o bobinas defectuosas.", "Inyectores de gas fallando.", "Pérdida de compresión."],
         consequences: ["Motor tembloroso y falta de fuerza."]
+      },
+      "P0301": {
+        title: "P0301 - Fallo de Encendido en Cilindro 1",
+        description: "La ECU detecta falta de combustión o pérdida de potencia en el Cilindro 1.",
+        causes: ["Bujía del cilindro 1 desgastada.", "Bobina o cable dañado.", "Inyector de gas/gasolina obstruido."],
+        consequences: ["Temblor constante del motor en mínimo.", "Pérdida notoria de aceleración."]
+      },
+      "P0302": {
+        title: "P0302 - Fallo de Encendido en Cilindro 2",
+        description: "Falla en el proceso de combustión específico del Cilindro 2.",
+        causes: ["Bujía carbonizada.", "Bobina individual cruzada.", "Empaque de culata picado en cil. 2."],
+        consequences: ["Motor inestable.", "Olor a combustible no quemado."]
+      },
+      "P0303": {
+        title: "P0303 - Fallo de Encendido en Cilindro 3",
+        description: "Pérdida de chispa o combustible en el Cilindro 3.",
+        causes: ["Bobina de encendido defectuosa.", "Fuga de compresión por válvulas.", "Inyector suelto."],
+        consequences: ["Vibraciones marcadas en el habitáculo.", "Luz Check parpadeante."]
+      },
+      "P0304": {
+        title: "P0304 - Fallo de Encendido en Cilindro 4",
+        description: "Falta de chispa o pulso de inyección en el Cilindro 4.",
+        causes: ["Bujía defectuosa.", "Rampas de inyectores de gas fallando.", "Cableado suelto."],
+        consequences: ["Pérdida de fuerza en pendientes.", "Consumo elevado."]
+      },
+      "P0335": {
+        title: "P0335 - Falla en Circuito del Sensor CKP (Posición del Cigüeñal)",
+        description: "La ECU pierde la señal del sensor principal que determina las RPM y la posición del cigüeñal.",
+        causes: ["Sensor CKP quemado.", "Cables rozando contra correas.", "Rueda fónica rota o sucia."],
+        consequences: ["El motor se apaga de golpe.", "El carro no vuelve a encender o da marcha en vano."]
+      },
+      "P0340": {
+        title: "P0340 - Falla en Circuito Sensor CMP (Posición del Árbol de Levas)",
+        description: "Pérdida de sincronía entre el árbol de levas y la computadora.",
+        causes: ["Sensor CMP dañado.", "Falso contacto.", "Cadena o faja de distribución fuera de punto."],
+        consequences: ["Dificultad para encender.", "Consumo alto.", "Pérdida de potencia."]
+      },
+
+      // CONTROLES DE EMISIONES Y EVAP (P0400 - P0499)
+      "P0401": {
+        title: "P0401 - Flujo Insuficiente en Sistema EGR",
+        description: "No está ingresando la cantidad esperada de gases de escape a la admisión para enfriar la combustión.",
+        causes: ["Válvula EGR obstruida por carbón.", "Conductos de admisión taponados.", "Manguera de vacío suelta."],
+        consequences: ["Cascabeleo/detonación en aceleración.", "Aumento de emisiones de NOx."]
+      },
+      "P0420": {
+        title: "P0420 - Eficiencia del Sistema Catalítico por Debajo del Umbral (Banco 1)",
+        description: "El convertidor catalítico no está purificando los gases de escape de manera adecuada.",
+        causes: ["Catalizador desgastado o destruido.", "Sensor de oxígeno posterior averiado.", "Fuga de escape."],
+        consequences: ["Luz Check Engine encendida.", "Restricción de escape si se desmorona por dentro."]
+      },
+      "P0441": {
+        title: "P0441 - Flujo Incorrecto en la Válvula de Purga EVAP",
+        description: "El sistema de control de vapores de gasolina purged no genera la evacuación adecuada.",
+        causes: ["Válvula solenoide de purga trabada.", "Manguera de vacío rota o desconectada."],
+        consequences: ["Olor a gasolina.", "Arrastre/inestabilidad tras tanquear gasolina."]
+      },
+      "P0442": {
+        title: "P0442 - Fuga Pequeña en Sistema EVAP",
+        description: "Se detecta una microfuga de vapores de combustible en el tanque o tuberías.",
+        causes: ["Tapa del tanque de gasolina floja o con empaque roto.", "Manguera EVAP agrietada."],
+        consequences: ["Luz Check Engine encendida."]
+      },
+
+      // COMPUTADORA, SENSORES Y RED CAN BUS (P0500 - P0700 / U0000 - U0400)
+      "P0500": {
+        title: "P0500 - Falla en Sensor de Velocidad del Vehículo (VSS)",
+        description: "La ECU no recibe la señal sobre la velocidad de marcha de las ruedas.",
+        causes: ["Sensor VSS roto.", "Engranaje del piñón en la caja desgastado.", "Cableado intermitente."],
+        consequences: ["Velocímetro del tablero no marca.", "Cambios bruscos en cajas automáticas."]
+      },
+      "P0505": {
+        title: "P0505 - Falla en Sistema de Control de Aire en Ralentí (Válvula IAC)",
+        description: "Imposibilidad de ajustar la marcha mínima o aceleración en neutro.",
+        causes: ["Válvula IAC / Paso a paso sucia de hollín.", "Fuga de aire en empaque de admisión."],
+        consequences: ["El motor se apaga en los semáforos.", "RPM muy altas o sube y baja constantemente."]
       },
       "P0600": {
         title: "P0600 - Falla de Comunicación CAN Bus",
@@ -1203,11 +1445,43 @@
         causes: ["Batería baja.", "Cableado o conectores dañados.", "Falsos contactos en la instalación de gas."],
         consequences: ["Falla de conmutación entre gasolina y gas."]
       },
+      "P0606": {
+        title: "P0606 - Falla en Procesador de la Computadora (ECU)",
+        description: "Fallo interno de procesamiento en la computadora del motor.",
+        causes: ["Pico de voltaje por alternador dañado.", "Filtración de agua a la ECU.", "ECU averiada."],
+        consequences: ["Vehículo no arranca o entra en modo de protección total."]
+      },
+      "P0700": {
+        title: "P0700 - Falla General en Módulo de Control de Transmisión (TCM)",
+        description: "La ECU de motor informa que la computadora de la caja automática detectó un fallo.",
+        causes: ["Problema interno en caja de cambios.", "Sensor de velocidad de turbina defectuoso."],
+        consequences: ["Caja bloqueada en 3ra marcha (Limp Mode).", "Golpes bruscos al pasar cambios."]
+      },
+
+      // CÓDIGOS DE CHASIS (ABS, DIRECCIÓN) Y CARROCERÍA (C0000 / B0000)
       "C0110": {
         title: "C0110 - Circuito del Motor de la Bomba del ABS",
         description: "Falla en el motor de la bomba hidráulica de los frenos ABS.",
         causes: ["Bomba con corto interno.", "Fusible o relé fundido."],
         consequences: ["Desactivación del sistema ABS."]
+      },
+      "C0035": {
+        title: "C0035 - Falla en Sensor de Velocidad Rueda Delantera Izquierda",
+        description: "La computadora del ABS no recibe la pulsación de la rueda delantera izquierda.",
+        causes: ["Sensor de rueda roto o sucio con grasa/polvo.", "Bocina o rodaje roto.", "Cable cortado."],
+        consequences: ["Luz de ABS y TC encendidas.", "Freno antiderrape inactivo."]
+      },
+      "B0001": {
+        title: "B0001 - Circuito Control Airbag Conductor (Cinta de Timón)",
+        description: "Interrupción en la señal de detonación de la bolsa de aire del volante.",
+        causes: ["Cinta o espiral del timón (Clockspring) rota.", "Conector bajo la columna desconectado."],
+        consequences: ["Testigo de Airbag fijo en el tablero.", "Inacción de bolsa de aire en colisión."]
+      },
+      "U0100": {
+        title: "U0100 - Pérdida de Comunicación con el Módulo ECM / ECU",
+        description: "Los módulos secundarios (ABS, Tablero, Gas) perdieron enlace con la computadora central.",
+        causes: ["Falta de alimentación a la ECU principal.", "Fusible principal quemado.", "Línea CAN cortada."],
+        consequences: ["El tablero no marca parámetros.", "El carro no da arranque."]
       }
     };
 
@@ -1365,6 +1639,39 @@
       checkUserSession();
     }
 
+    // REGISTRO ÚNICO DE PLACA
+    async function handleSavePlate() {
+      const activeUser = JSON.parse(localStorage.getItem('sngas_active_session'));
+      const inputEl = document.getElementById('userPlateInput');
+      if (!inputEl || !activeUser || !supabaseClient) return;
+
+      const placaVal = inputEl.value.trim().toUpperCase();
+
+      if (placaVal.length < 6) {
+        return alert("Por favor ingresa una placa válida de 6 caracteres (Ejemplo: ABC123).");
+      }
+
+      const confirmacion = confirm(`¿Confirmas que la placa de tu vehículo es ${placaVal}?\n\nPor motivos de seguridad, una vez guardada no podrás modificarla ni borrarla desde la app.`);
+      
+      if (!confirmacion) return;
+
+      const { data, error } = await supabaseClient
+        .from('usuarios')
+        .update({ placa: placaVal })
+        .eq('id', activeUser.id)
+        .select();
+
+      if (error) {
+        alert("Ocurrió un error al guardar la placa: " + error.message);
+      } else {
+        alert("¡Placa registrada con éxito!");
+        if (data && data[0]) {
+          localStorage.setItem('sngas_active_session', JSON.stringify(data[0]));
+        }
+        checkUserSession();
+      }
+    }
+
     function formatCertDate(rawDate) {
       if (!rawDate) return null;
       const d = new Date(rawDate + (rawDate.length === 10 ? 'T00:00:00' : ''));
@@ -1490,10 +1797,19 @@
           if (data) {
             isUserVipActive = data.membresia_activa === true;
 
-            // Placa
-            if (data.placa) {
+            // LÓGICA DE MOSTRAR / REGISTRAR PLACA EN LA PARTE SUPERIOR
+            const inputContainer = document.getElementById('plateInputContainer');
+            const displayContainer = document.getElementById('plateDisplayContainer');
+
+            if (data.placa && data.placa.trim() !== '') {
+              // Si ya tiene placa guardada: Muestra solo lectura
               document.getElementById('userPlateDisplay').textContent = data.placa.toUpperCase();
-              document.getElementById('vehiclePlateBox').style.display = 'inline-flex';
+              if (inputContainer) inputContainer.style.display = 'none';
+              if (displayContainer) displayContainer.style.display = 'inline-flex';
+            } else {
+              // Si no tiene placa: Muestra formulario para ingresarla una única vez
+              if (inputContainer) inputContainer.style.display = 'flex';
+              if (displayContainer) displayContainer.style.display = 'none';
             }
 
             // Puntos / Monegas
