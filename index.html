@@ -123,6 +123,20 @@
       margin: auto;
     }
 
+    .section-title {
+      font-size: 1.8rem;
+      color: #0f172a;
+      margin-bottom: 0.5rem;
+      text-align: center;
+    }
+
+    .section-subtitle {
+      font-size: 1rem;
+      color: #64748b;
+      margin-bottom: 2rem;
+      text-align: center;
+    }
+
     /* PÁGINA DE INICIO */
     .hero-banner {
       background: linear-gradient(rgba(15, 23, 42, 0.8), rgba(15, 23, 42, 0.8)), url('https://picsum.photos/id/1072/1200/400') center/cover;
@@ -183,14 +197,14 @@
     /* PÁGINAS DE TIENDA Y SERVICIOS */
     .products-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
       gap: 1.5rem;
     }
 
     .product-card {
       background: white;
       border-radius: 8px;
-      padding: 1rem;
+      padding: 1.2rem;
       box-shadow: 0 2px 8px rgba(0,0,0,0.1);
       display: flex;
       flex-direction: column;
@@ -206,7 +220,7 @@
       width: 100%;
       height: 160px;
       object-fit: cover;
-      border-radius: 4px;
+      border-radius: 6px;
       margin-bottom: 0.8rem;
     }
 
@@ -233,9 +247,17 @@
     .badge-exclusivo { background-color: #fce7f3; color: #be185d; }
 
     .product-title {
-      font-size: 1.1rem;
-      font-weight: 600;
-      margin-bottom: 0.5rem;
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: #0f172a;
+      margin-bottom: 0.4rem;
+    }
+
+    .product-desc {
+      font-size: 0.88rem;
+      color: #64748b;
+      margin-bottom: 0.8rem;
+      line-height: 1.35;
     }
 
     .product-price {
@@ -254,7 +276,7 @@
       color: white;
       text-decoration: none;
       padding: 0.7rem;
-      border-radius: 4px;
+      border-radius: 6px;
       font-weight: bold;
       font-size: 0.95rem;
       transition: background-color 0.2s;
@@ -1005,6 +1027,8 @@
   <!-- SECCIÓN DE LA TIENDA -->
   <section id="shopSection" class="page-section">
     <div class="container">
+      <h2 class="section-title">Tienda de Repuestos</h2>
+      <p class="section-subtitle">Repuestos e insumos certificados para GNV, GLP y Gasolina</p>
       <main class="products-grid" id="productsGrid"></main>
     </div>
   </section>
@@ -1012,6 +1036,8 @@
   <!-- SECCIÓN DE SERVICIOS -->
   <section id="servicesSection" class="page-section">
     <div class="container">
+      <h2 class="section-title">Nuestros Servicios Especializados</h2>
+      <p class="section-subtitle">Soluciones profesionales en mecánica integral, electrónica vehicular y sistemas a gas</p>
       <main class="products-grid" id="servicesGrid"></main>
     </div>
   </section>
@@ -1240,7 +1266,7 @@
     // CONFIGURACIÓN MANTENIMIENTOS POR KILOMETRAJE
     const KM_MAINTENANCE_CONFIG = [
       { key: 'mantenimiento_gas',    label: 'Mantenimiento de Gas (GNV/GLP)', icon: '⛽', interval: 20000,  warning: 20000 },
-      { key: 'cambio_aceite',        label: 'Cambio de Aceite',               icon: '🛢️️', interval: 5000,  warning: 5000 },
+      { key: 'cambio_aceite',        label: 'Cambio de Aceite',               icon: '🛢', interval: 5000,  warning: 5000 },
       { key: 'afinamiento_gasolina', label: 'Afinamiento de Gasolina',        icon: '🔧', interval: 10000, warning: 10000 },
       { key: 'revision_frenos',      label: 'Revisión de Frenos',             icon: '🛑', interval: 10000, warning: 10000 },
       { key: 'revision_fluidos',     label: 'Revisión de Fluidos',            icon: '💧', interval: 10000, warning: 10000 },
@@ -1532,16 +1558,71 @@
       window.open(whatsappUrl, '_blank');
     }
 
-    // CATÁLOGO
+    // CATÁLOGO DE PRODUCTOS
     const products = [
-      { id: 1, name: 'Bujias', category: ['Gasolina'], priceText: '', image: 'https://picsum.photos/id/1078/300/200' },
-      { id: 3, name: 'Reductor 5ta', category: ['GNV'], priceText: '', image: 'https://picsum.photos/id/1078/300/200' },
-      { id: 5, name: 'Reductor 5ta', category: ['GLP'], priceText: '', image: 'https://picsum.photos/id/1078/300/200' }
+      { id: 1, name: 'Bujías Especiales para Gas', category: ['Gasolina', 'GNV', 'GLP'], priceText: '', description: 'Bujías de iridio/platino diseñadas para alta temperatura de combustión.', image: 'imagen%20de%20productos%20nd.jfif' },
+      { id: 3, name: 'Reductor / Regulador GNV 5ta Gen', category: ['GNV'], priceText: '', description: 'Reductor de alta presión con regulador térmico incorporado.', image: 'imagen%20de%20productos%20nd.jfif' },
+      { id: 5, name: 'Reductor / Regulador GLP 5ta Gen', category: ['GLP'], priceText: '', description: 'Regulador de presión de gas GLP para sistemas secuenciales.', image: 'imagen%20de%20productos%20nd.jfif' }
     ];
 
+    // CATÁLOGO COMPLETO DE SERVICIOS (Se removieron GLP, GNV y Gasolina de las categorías)
     const services = [
-      { id: 1, name: 'Escaneo', category: ['Servicios'], priceText: '', image: 'https://picsum.photos/id/1078/300/200' },
-      { id: 2, name: 'Regulación de GNV/GLP', category: ['Servicios'], priceText: '', image: 'https://picsum.photos/id/1078/300/200' }
+      { 
+        id: 101, 
+        name: 'Mantenimiento Preventivo GLP / GNV', 
+        category: [], 
+        priceText: '', 
+        description: 'Limpieza de inyectores de gas, cambio de filtros de fase líquida/gaseosa, revisión de fugas y calibración computarizada.',
+        image: 'imagen%20de%20productos%20nd.jfif' 
+      },
+      { 
+        id: 102, 
+        name: 'Escaneo y Diagnóstico OBD-II', 
+        category: [], 
+        priceText: '', 
+        description: 'Diagnóstico de luces de falla (Check Engine), análisis de sensores en vivo, borrado de códigos y reporte técnico.',
+        image: 'imagen%20de%20productos%20nd.jfif' 
+      },
+      { 
+        id: 103, 
+        name: 'Conversión a GNV / GLP (5ta Generación)', 
+        category: [], 
+        priceText: '', 
+        description: 'Instalación completa de kit de conversión a gas de 5ta generación con tanque certificado y garantía de taller.',
+        image: 'imagen%20de%20productos%20nd.jfif' 
+      },
+      { 
+        id: 104, 
+        name: 'Afinamiento Electrónico a Gasolina', 
+        category: [], 
+        priceText: '', 
+        description: 'Limpieza de cuerpo de aceleración, inyectores por ultrasonido, cambio de filtro de aire/gasolina y ajuste de ralentí.',
+        image: 'imagen%20de%20productos%20nd.jfif' 
+      },
+      { 
+        id: 105, 
+        name: 'Regulación y Calibración por Software', 
+        category: [], 
+        priceText: '', 
+        description: 'Ajuste fino de mapas de inyección de gas en ruta y ralentí para optimizar consumo y potencia.',
+        image: 'imagen%20de%20productos%20nd.jfif' 
+      },
+      { 
+        id: 106, 
+        name: 'Mantenimiento de Frenos y Suspensión', 
+        category: [], 
+        priceText: '', 
+        description: 'Inspección técnica, rectificado de discos/tambores, cambio de pastillas, zapatas y purga de líquido de frenos.',
+        image: 'imagen%20de%20productos%20nd.jfif' 
+      },
+      { 
+        id: 107, 
+        name: 'Certificación Anual / Inspección Quinquenal', 
+        category: [], 
+        priceText: '', 
+        description: 'Evaluación técnica del sistema de gas para renovación de certificado anual GNV/GLP y prueba hidrostática de cilindro.',
+        image: 'imagen%20de%20productos%20nd.jfif' 
+      }
     ];
 
     function showSection(sectionName) {
@@ -1569,17 +1650,24 @@
 
     function createCardHTML(item) {
       const priceDisplay = item.priceText ? `S/ ${item.priceText}` : '';
-      const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent('Hola, quiero consultar: ' + item.name)}`;
+      const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent('Hola SN\'GAS ONLINE, me interesa consultar por el servicio/producto: ' + item.name)}`;
+
+      const badgesHTML = (item.category && item.category.length > 0) ? item.category.map(cat => {
+        const catClass = cat.toLowerCase();
+        return `<span class="product-badge badge-${catClass}">${cat}</span>`;
+      }).join(' ') : '';
 
       return `
         <div class="product-card">
           <div>
-            <img src="${item.image}" class="product-image">
+            <img src="${item.image}" class="product-image" alt="${item.name}">
+            <div class="badges-container">${badgesHTML}</div>
             <div class="product-title">${item.name}</div>
+            ${item.description ? `<div class="product-desc">${item.description}</div>` : ''}
           </div>
           <div>
             ${priceDisplay ? `<div class="product-price">${priceDisplay}</div>` : ''}
-            <a href="${whatsappUrl}" target="_blank" class="btn-whatsapp">Solicitar por WhatsApp</a>
+            ${item.priceText ? `<a href="${whatsappUrl}" target="_blank" class="btn-whatsapp">Consultar por WhatsApp</a>` : ''}
           </div>
         </div>
       `;
