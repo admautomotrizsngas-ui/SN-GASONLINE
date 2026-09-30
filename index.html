@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>SN'GAS ONLINE - Inicio, Tienda, Servicios y Cuenta</title>
+  <title>SN'GAS ONLINE - Inicio, Tienda, Servicios y Cuenta Halloween</title>
   <style>
     /* Estilos Generales */
     * {
@@ -139,7 +139,7 @@
 
     /* PÁGINA DE INICIO */
     .hero-banner {
-      background: linear-gradient(rgba(15, 23, 42, 0.8), rgba(15, 23, 42, 0.8)), url('INICIO.jfif') center/cover;
+      background: linear-gradient(rgba(15, 23, 42, 0.8), rgba(15, 23, 42, 0.8)), url('iniciohalloween.jfif') center/cover;
       color: white;
       text-align: center;
       padding: 4rem 1.5rem;
@@ -286,20 +286,39 @@
       background-color: #1da851;
     }
 
-    /* ESTILOS DE REGISTRO / MI CUENTA */
+    /* ==========================================
+       🎃 ESTILOS HALLOWEEN PARA "MI CUENTA"
+       ========================================== */
+    #accountSection {
+      background: radial-gradient(circle at top, #1a0b2e 0%, #0d0614 100%);
+      padding-top: 2rem;
+      padding-bottom: 4rem;
+      min-height: 80vh;
+      color: #f3e8ff;
+    }
+
+    .halloween-title {
+      color: #f97316 !important;
+      text-shadow: 0 0 10px rgba(249, 115, 22, 0.5);
+    }
+
+    /* AUTH CONTAINER HALLOWEEN */
     .auth-container {
       max-width: 450px;
       margin: 0 auto;
-      background: white;
-      padding: 2rem;
-      border-radius: 8px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      background: rgba(23, 15, 38, 0.95);
+      padding: 2.2rem;
+      border-radius: 16px;
+      box-shadow: 0 8px 32px rgba(249, 115, 22, 0.2), inset 0 0 15px rgba(147, 51, 234, 0.3);
+      border: 2px solid #a855f7;
     }
 
     .auth-form h2 {
-      margin-bottom: 1rem;
-      color: #0f172a;
+      margin-bottom: 1.2rem;
+      color: #f97316;
       text-align: center;
+      font-size: 1.8rem;
+      letter-spacing: 1px;
     }
 
     .form-group {
@@ -308,66 +327,87 @@
 
     .form-group label {
       display: block;
-      margin-bottom: 0.3rem;
+      margin-bottom: 0.4rem;
       font-size: 0.9rem;
       font-weight: 600;
+      color: #e9d5ff;
     }
 
     .form-group input {
       width: 100%;
-      padding: 0.6rem;
-      border: 1px solid #cbd5e1;
-      border-radius: 4px;
+      padding: 0.75rem;
+      border: 1px solid #6b21a8;
+      background-color: #0f0a1c;
+      color: #fff;
+      border-radius: 8px;
       font-size: 1rem;
+      outline: none;
+      transition: border-color 0.3s, box-shadow 0.3s;
+    }
+
+    .form-group input:focus {
+      border-color: #f97316;
+      box-shadow: 0 0 8px rgba(249, 115, 22, 0.6);
     }
 
     .btn-submit {
       width: 100%;
-      background-color: #0284c7;
+      background: linear-gradient(135deg, #ea580c 0%, #c2410c 100%);
       color: white;
-      padding: 0.7rem;
+      padding: 0.8rem;
       border: none;
-      border-radius: 4px;
+      border-radius: 8px;
       font-size: 1rem;
       font-weight: bold;
       cursor: pointer;
       margin-top: 0.5rem;
-      transition: background-color 0.2s;
+      box-shadow: 0 4px 14px rgba(234, 88, 12, 0.4);
+      transition: all 0.2s;
     }
 
     .btn-submit:hover {
-      background-color: #0369a1;
+      background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 18px rgba(249, 115, 22, 0.6);
     }
 
     .toggle-auth {
-      margin-top: 1rem;
+      margin-top: 1.2rem;
       text-align: center;
       font-size: 0.9rem;
-      color: #64748b;
+      color: #c084fc;
     }
 
     .toggle-auth span {
-      color: #0284c7;
+      color: #f97316;
       cursor: pointer;
       font-weight: bold;
+      text-decoration: underline;
     }
 
-    /* PERFIL PRIVADO DEL CLIENTE */
+    /* DASHBOARD CLIENTE HALLOWEEN */
     .user-dashboard {
-      background: white;
+      background: rgba(23, 15, 38, 0.85);
       padding: 2rem;
-      border-radius: 8px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+      border-radius: 16px;
+      box-shadow: 0 8px 30px rgba(0,0,0,0.5);
+      border: 1px solid #581c87;
+      backdrop-filter: blur(5px);
     }
 
     .dashboard-header {
       display: flex;
       justify-content: space-between;
       align-items: flex-start;
-      border-bottom: 2px solid #f1f5f9;
+      border-bottom: 2px solid #3b0764;
       padding-bottom: 1.5rem;
       margin-bottom: 1.5rem;
       gap: 1rem;
+    }
+
+    .dashboard-header h2 {
+      color: #f97316;
+      font-size: 1.8rem;
     }
 
     .user-greeting-container {
@@ -377,14 +417,15 @@
       flex-wrap: wrap;
     }
 
-    /* RECUADRO SUPERIOR DE PLACA DINÁMICO */
+    /* PLACA TENEBROSA */
     .plate-top-box {
       margin-bottom: 1.5rem;
-      background-color: #0f172a;
-      border: 1px solid #334155;
-      padding: 1rem;
-      border-radius: 10px;
+      background-color: #0f0a1c;
+      border: 2px dashed #f97316;
+      padding: 1.2rem;
+      border-radius: 12px;
       color: white;
+      box-shadow: 0 0 12px rgba(249, 115, 22, 0.15);
     }
 
     .plate-form-container {
@@ -395,9 +436,9 @@
     }
 
     .plate-form-container label {
-      font-size: 0.85rem;
+      font-size: 0.9rem;
       font-weight: bold;
-      color: #94a3b8;
+      color: #e9d5ff;
     }
 
     .plate-input-wrapper {
@@ -409,9 +450,9 @@
 
     .plate-input-wrapper input {
       width: 100%;
-      background-color: #1e293b;
-      border: 1px solid #475569;
-      color: #f59e0b;
+      background-color: #1e112a;
+      border: 1px solid #9333ea;
+      color: #f97316;
       font-family: 'Courier New', Courier, monospace;
       font-size: 1.1rem;
       font-weight: 800;
@@ -424,12 +465,13 @@
     }
 
     .plate-input-wrapper input:focus {
-      border-color: #f59e0b;
+      border-color: #f97316;
+      box-shadow: 0 0 8px rgba(249, 115, 22, 0.5);
     }
 
     .btn-save-plate {
-      background-color: #eab308;
-      color: #0f172a;
+      background: #f97316;
+      color: #0d0614;
       border: none;
       padding: 0.5rem 1rem;
       border-radius: 6px;
@@ -437,36 +479,38 @@
       cursor: pointer;
       font-size: 0.9rem;
       white-space: nowrap;
-      transition: background-color 0.2s;
+      transition: all 0.2s;
     }
 
     .btn-save-plate:hover {
-      background-color: #fde047;
+      background-color: #fb923c;
+      box-shadow: 0 0 10px rgba(249, 115, 22, 0.8);
     }
 
     .plate-registered-badge {
       display: inline-flex;
       align-items: center;
       gap: 10px;
-      background-color: #1e293b;
-      border: 2px solid #334155;
+      background-color: #1e112a;
+      border: 2px solid #f97316;
       padding: 8px 16px;
       border-radius: 8px;
     }
 
     .plate-registered-badge .plate-label {
-      font-size: 0.8rem;
-      color: #94a3b8;
+      font-size: 0.85rem;
+      color: #d8b4fe;
       font-weight: 700;
       letter-spacing: 0.5px;
     }
 
     .plate-registered-badge .plate-number {
-      font-size: 1.2rem;
+      font-size: 1.3rem;
       font-weight: 800;
-      color: #f59e0b;
+      color: #f97316;
       font-family: 'Courier New', Courier, monospace;
       letter-spacing: 2px;
+      text-shadow: 0 0 5px rgba(249, 115, 22, 0.5);
     }
 
     .btn-vip-whatsapp {
@@ -480,159 +524,16 @@
       border-radius: 20px;
       font-size: 0.85rem;
       font-weight: bold;
-      box-shadow: 0 2px 6px rgba(37, 211, 102, 0.3);
+      box-shadow: 0 2px 10px rgba(37, 211, 102, 0.4);
       transition: transform 0.2s, background-color 0.2s;
     }
 
     .btn-vip-whatsapp:hover {
       background-color: #1da851;
-      transform: scale(1.03);
+      transform: scale(1.05);
     }
 
-    /* BANNER DE PROMOCIONES */
-    .promo-section {
-      background: linear-gradient(135deg, #7c2d12 0%, #9a3412 100%);
-      color: white;
-      padding: 20px;
-      border-radius: 12px;
-      margin: 25px 0;
-      border-left: 5px solid #f97316;
-      display: flex;
-      align-items: center;
-      gap: 20px;
-      flex-wrap: wrap;
-      min-height: 160px;
-    }
-
-    .promo-image {
-      width: 160px;
-      height: 120px;
-      object-fit: cover;
-      border-radius: 8px;
-      flex-shrink: 0;
-    }
-
-    .promo-content {
-      flex: 1;
-      min-width: 200px;
-    }
-
-    .promo-content h3 {
-      font-size: 1.25rem;
-      color: #fed7aa;
-      margin-bottom: 6px;
-    }
-
-    .promo-content p {
-      font-size: 0.92rem;
-      color: #fef3c7;
-      line-height: 1.4;
-    }
-
-    /* BÚSQUEDA CÓDIGOS DE ERROR OBD-II */
-    .dtc-section {
-      background: #0f172a;
-      color: white;
-      padding: 20px;
-      border-radius: 12px;
-      margin: 25px 0;
-      border-left: 5px solid #0284c7;
-    }
-
-    .dtc-header h3 {
-      font-size: 1.25rem;
-      color: #38bdf8;
-      margin-bottom: 6px;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .dtc-header p {
-      font-size: 0.9rem;
-      color: #94a3b8;
-      margin-bottom: 16px;
-    }
-
-    .dtc-search-box {
-      display: flex;
-      gap: 10px;
-      max-width: 500px;
-    }
-
-    .dtc-search-box input {
-      flex: 1;
-      padding: 10px 14px;
-      border-radius: 6px;
-      border: 1px solid #334155;
-      background: #1e293b;
-      color: #fff;
-      font-size: 1rem;
-      text-transform: uppercase;
-      font-weight: bold;
-      letter-spacing: 1px;
-    }
-
-    .dtc-search-box input::placeholder {
-      color: #64748b;
-      font-weight: normal;
-      text-transform: none;
-    }
-
-    .dtc-search-box button {
-      background: #0284c7;
-      color: white;
-      border: none;
-      padding: 10px 18px;
-      border-radius: 6px;
-      font-weight: bold;
-      cursor: pointer;
-      transition: background 0.2s;
-    }
-
-    .dtc-search-box button:hover {
-      background: #0369a1;
-    }
-
-    .dtc-result-card {
-      margin-top: 16px;
-      background: #1e293b;
-      border-radius: 8px;
-      padding: 16px;
-      border: 1px solid #334155;
-    }
-
-    .dtc-code-title {
-      font-size: 1.2rem;
-      color: #f59e0b;
-      font-weight: bold;
-      margin-bottom: 8px;
-    }
-
-    .dtc-block {
-      margin-bottom: 12px;
-    }
-
-    .dtc-block strong {
-      color: #38bdf8;
-      display: block;
-      font-size: 0.85rem;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-      margin-bottom: 3px;
-    }
-
-    .dtc-block p, .dtc-block ul {
-      color: #e2e8f0;
-      font-size: 0.92rem;
-      line-height: 1.4;
-    }
-
-    .dtc-block ul {
-      padding-left: 18px;
-    }
-
-    /* RECOMPENSAS Y CERTIFICACIÓN */
+    /* TARJETAS DE RECOMPENSAS HALLOWEEN */
     .rewards-wrapper {
       display: flex;
       gap: 16px;
@@ -649,36 +550,36 @@
       display: flex;
       flex-direction: column;
       justify-content: space-between;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
-      border: 1px solid rgba(0, 0, 0, 0.08);
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+      border: 1px solid rgba(255, 255, 255, 0.1);
       transition: transform 0.2s ease, box-shadow 0.2s ease;
     }
 
     .reward-card:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
+      transform: translateY(-3px);
+      box-shadow: 0 8px 20px rgba(168, 85, 247, 0.3);
     }
 
     .monegas-card {
-      background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+      background: linear-gradient(135deg, #1e0a38 0%, #2e1052 100%);
       color: white;
-      border-left: 5px solid #eab308;
+      border-left: 5px solid #f97316;
     }
 
     .gift-card {
-      background: linear-gradient(135deg, #fffbebe6 0%, #fef3c7 100%);
-      color: #78350f;
-      border-left: 5px solid #f59e0b;
+      background: linear-gradient(135deg, #3b0764 0%, #581c87 100%);
+      color: #f3e8ff;
+      border-left: 5px solid #a855f7;
     }
 
     .cert-card {
-      background: linear-gradient(135deg, #052e2b 0%, #064e3b 100%);
+      background: linear-gradient(135deg, #064e3b 0%, #022c22 100%);
       color: white;
       border-left: 5px solid #10b981;
     }
 
     .cert-box {
-      background: rgba(0, 0, 0, 0.25);
+      background: rgba(0, 0, 0, 0.4);
       border: 2px solid #10b981;
       font-size: 1.3rem;
       font-weight: 800;
@@ -686,7 +587,7 @@
     }
 
     .cert-box.cert-alert {
-      border-color: #f87171;
+      border-color: #ef4444;
       color: #fca5a5;
     }
 
@@ -696,11 +597,13 @@
     }
 
     .vip-card {
-      background: linear-gradient(135deg, #1e1b4b 0%, #312e81 100%);
+      background: linear-gradient(135deg, #2a085c 0%, #170338 100%);
       color: white;
-      border-left: 5px solid #a855f7;
+      border: 2px solid #a855f7;
+      border-left: 6px solid #f97316;
       width: 100%;
       margin-bottom: 25px;
+      box-shadow: 0 0 15px rgba(168, 85, 247, 0.2);
     }
 
     .reward-inner-box {
@@ -714,26 +617,27 @@
     }
 
     .monegas-box {
-      background: rgba(15, 23, 42, 0.6);
-      border: 2px solid #eab308;
+      background: rgba(15, 10, 28, 0.8);
+      border: 2px solid #f97316;
       font-size: 2.2rem;
       font-weight: 800;
-      color: #eab308;
+      color: #f97316;
       gap: 8px;
+      text-shadow: 0 0 8px rgba(249, 115, 22, 0.4);
     }
 
     .monegas-box small {
       font-size: 1.1rem;
       font-weight: 600;
-      color: #fde047;
+      color: #fb923c;
     }
 
     .gift-box {
-      background: rgba(255, 255, 255, 0.85);
-      border: 2px dashed #f59e0b;
+      background: rgba(15, 10, 28, 0.8);
+      border: 2px dashed #a855f7;
       font-size: 1.1rem;
       font-weight: 700;
-      color: #854d0e;
+      color: #e9d5ff;
       line-height: 1.4;
     }
 
@@ -744,7 +648,7 @@
     }
 
     .reward-icon {
-      font-size: 1.3rem;
+      font-size: 1.4rem;
     }
 
     .reward-tag {
@@ -752,6 +656,7 @@
       font-weight: 700;
       text-transform: uppercase;
       letter-spacing: 0.5px;
+      color: #f97316;
     }
 
     .reward-footer-text {
@@ -759,6 +664,7 @@
       opacity: 0.9;
       margin-top: 8px;
       line-height: 1.4;
+      color: #d8b4fe;
     }
 
     .btn-logout {
@@ -766,35 +672,35 @@
       color: white;
       border: none;
       padding: 0.5rem 1rem;
-      border-radius: 4px;
+      border-radius: 6px;
       cursor: pointer;
       font-weight: bold;
+      transition: background-color 0.2s;
     }
 
-    .exclusive-title {
-      color: #be185d;
-      margin-bottom: 1rem;
-      font-size: 1.3rem;
+    .btn-logout:hover {
+      background-color: #dc2626;
     }
 
-    /* CALCULADORA DE MANTENIMIENTOS POR KILOMETRAJE */
+    /* CALCULADORA HALLOWEEN */
     .km-calc-box {
-      background: white;
+      background: #170f26;
       padding: 1.5rem;
       border-radius: 12px;
       margin: 20px 0;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-      border-left: 5px solid #0284c7;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+      border-left: 5px solid #f97316;
+      border: 1px solid #3b0764;
     }
 
     .km-calc-box h3 {
-      color: #0f172a;
+      color: #f97316;
       margin-bottom: 6px;
-      font-size: 1.2rem;
+      font-size: 1.25rem;
     }
 
     .km-calc-box > p {
-      color: #64748b;
+      color: #c084fc;
       font-size: 0.9rem;
       margin-bottom: 16px;
     }
@@ -818,26 +724,25 @@
     .km-input-group label {
       font-size: 0.85rem;
       font-weight: 700;
-      color: #334155;
+      color: #e9d5ff;
     }
 
     .km-input-group input[type="number"] {
       padding: 0.65rem 0.8rem;
-      border: 1px solid #cbd5e1;
+      border: 1px solid #6b21a8;
+      background-color: #0f0a1c;
+      color: #fff;
       border-radius: 6px;
       font-size: 1rem;
+      outline: none;
     }
 
     .btn-calcular {
       width: auto;
       margin-top: 0;
       padding: 0.65rem 1.6rem;
-      background-color: #0284c7;
+      background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
       white-space: nowrap;
-    }
-
-    .btn-calcular:hover {
-      background-color: #0369a1;
     }
 
     .maintenance-grid {
@@ -849,8 +754,9 @@
     .maint-card {
       border-radius: 10px;
       padding: 16px;
-      border-left: 5px solid #94a3b8;
-      background: #f8fafc;
+      border-left: 5px solid #64748b;
+      background: #0f0a1c;
+      border: 1px solid #2e1052;
     }
 
     .maint-card-header {
@@ -867,7 +773,7 @@
     .maint-title {
       font-weight: 700;
       font-size: 0.92rem;
-      color: #0f172a;
+      color: #f3e8ff;
     }
 
     .maint-status-badge {
@@ -879,61 +785,165 @@
       padding: 2px 10px;
       border-radius: 12px;
       margin-bottom: 8px;
-      background: #94a3b8;
+      background: #64748b;
       color: white;
     }
 
     .maint-detail {
       font-size: 0.85rem;
-      color: #475569;
+      color: #cbd5e1;
       line-height: 1.4;
     }
 
     .maint-card.status-green {
-      border-left-color: #16a34a;
-      background: #f0fdf4;
+      border-left-color: #10b981;
+      background: #06201b;
     }
     .maint-card.status-green .maint-status-badge {
-      background: #16a34a;
+      background: #10b981;
     }
 
     .maint-card.status-yellow {
-      border-left-color: #eab308;
-      background: #fefce8;
+      border-left-color: #f59e0b;
+      background: #2b1a04;
     }
     .maint-card.status-yellow .maint-status-badge {
-      background: #eab308;
-      color: #422006;
+      background: #f59e0b;
+      color: #000;
     }
 
     .maint-card.status-red {
       border-left-color: #ef4444;
-      background: #fef2f2;
+      background: #2c0b0e;
     }
     .maint-card.status-red .maint-status-badge {
       background: #ef4444;
     }
 
-    .maint-card.status-gray .maint-status-badge {
-      background: #94a3b8;
-    }
-
     .date-maintenance-block {
       margin-top: 22px;
       padding-top: 18px;
-      border-top: 2px dashed #e2e8f0;
+      border-top: 2px dashed #3b0764;
     }
 
     .date-maintenance-block h4 {
-      color: #0f172a;
+      color: #f97316;
       font-size: 1rem;
       margin-bottom: 4px;
     }
 
     .date-maintenance-block > p {
-      color: #64748b;
+      color: #c084fc;
       font-size: 0.85rem;
       margin-bottom: 14px;
+    }
+
+    /* BANNER PROMOCIONAL HALLOWEEN */
+    .promo-section {
+      background: linear-gradient(135deg, #451a03 0%, #78350f 100%);
+      color: white;
+      padding: 20px;
+      border-radius: 12px;
+      margin: 25px 0;
+      border-left: 5px solid #f97316;
+      border: 1px solid #f97316;
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      flex-wrap: wrap;
+      min-height: 160px;
+      box-shadow: 0 0 15px rgba(249, 115, 22, 0.2);
+    }
+
+    .promo-content h3 {
+      font-size: 1.25rem;
+      color: #fdba74;
+      margin-bottom: 6px;
+    }
+
+    .promo-content p {
+      font-size: 0.92rem;
+      color: #fef3c7;
+      line-height: 1.4;
+    }
+
+    /* BÚSQUEDA OBD-II HALLOWEEN */
+    .dtc-section {
+      background: #0f0a1c;
+      color: white;
+      padding: 20px;
+      border-radius: 12px;
+      margin: 25px 0;
+      border-left: 5px solid #a855f7;
+      border: 1px solid #3b0764;
+    }
+
+    .dtc-header h3 {
+      font-size: 1.25rem;
+      color: #c084fc;
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .dtc-header p {
+      font-size: 0.9rem;
+      color: #e9d5ff;
+      margin-bottom: 16px;
+    }
+
+    .dtc-search-box {
+      display: flex;
+      gap: 10px;
+      max-width: 500px;
+    }
+
+    .dtc-search-box input {
+      flex: 1;
+      padding: 10px 14px;
+      border-radius: 6px;
+      border: 1px solid #6b21a8;
+      background: #170f26;
+      color: #fff;
+      font-size: 1rem;
+      text-transform: uppercase;
+      font-weight: bold;
+      letter-spacing: 1px;
+    }
+
+    .dtc-search-box button {
+      background: #a855f7;
+      color: white;
+      border: none;
+      padding: 10px 18px;
+      border-radius: 6px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .dtc-search-box button:hover {
+      background: #9333ea;
+    }
+
+    .dtc-result-card {
+      margin-top: 16px;
+      background: #170f26;
+      border-radius: 8px;
+      padding: 16px;
+      border: 1px solid #581c87;
+    }
+
+    .dtc-code-title {
+      font-size: 1.2rem;
+      color: #f97316;
+      font-weight: bold;
+      margin-bottom: 8px;
+    }
+
+    .dtc-block strong {
+      color: #c084fc;
     }
 
     @media (max-width: 768px) {
@@ -970,7 +980,7 @@
   <!-- TIRA CORREDORA -->
   <div class="marquee-container">
     <div class="marquee-text">
-      LOS AUXILIOS MECÁNICOS A PARTIR DE LAS 6PM SON SOLO PARA LOS QUE CUENTAN CON EL SEGURO &nbsp;&nbsp;&nbsp;—&nbsp;&nbsp;&nbsp; LOS AUXILIOS MECÁNICOS A PARTIR DE LAS 6PM SON SOLO PARA LOS QUE CUENTAN CON EL SEGURO
+      🎃 ¡OFERTAS DE HALLOWEEN! LOS AUXILIOS MECÁNICOS NOCTURNOS A PARTIR DE LAS 6PM SON SOLO PARA CLIENTES VIP REGISTRADOS 👻
     </div>
   </div>
 
@@ -982,7 +992,7 @@
       <span class="nav-link active" id="nav-home" onclick="showSection('home')">Inicio</span>
       <span class="nav-link" id="nav-shop" onclick="showSection('shop')">Tienda</span>
       <span class="nav-link" id="nav-services" onclick="showSection('services')">Servicios</span>
-      <span class="nav-link" id="nav-account" onclick="showSection('account')">Mi Cuenta</span>
+      <span class="nav-link" id="nav-account" onclick="showSection('account')">🎃 Mi Cuenta</span>
     </nav>
 
     <!-- Buscador (Solo visible en la Tienda) -->
@@ -1042,16 +1052,16 @@
     </div>
   </section>
 
-  <!-- SECCIÓN MI CUENTA -->
+  <!-- SECCIÓN MI CUENTA (HALLOWEEN EDITION 🎃) -->
   <section id="accountSection" class="page-section">
     <div class="container">
       
-      <!-- FORMULARIO DE LOGIN / REGISTRO -->
+      <!-- FORMULARIO DE LOGIN / REGISTRO HALLOWEEN -->
       <div class="auth-container" id="authBox">
         
         <!-- Registro -->
         <form class="auth-form" id="registerForm" onsubmit="handleRegister(event)">
-          <h2>Crear una Cuenta</h2>
+          <h2>🎃 Únete a la Cripta VIP</h2>
           <div class="form-group">
             <label>Nombre Completo</label>
             <input type="text" id="regName" required placeholder="Ej. Juan Pérez">
@@ -1068,15 +1078,15 @@
             <label>Contraseña</label>
             <input type="password" id="regPassword" required placeholder="******">
           </div>
-          <button type="submit" class="btn-submit">Registrarme</button>
+          <button type="submit" class="btn-submit">👻 Registrar mi Cuenta</button>
           <div class="toggle-auth">
-            ¿Ya tienes cuenta? <span onclick="toggleAuthForms('login')">Inicia Sesión</span>
+            ¿Ya eres socio? <span onclick="toggleAuthForms('login')">Ingresa aquí</span>
           </div>
         </form>
 
         <!-- Login -->
         <form class="auth-form" id="loginForm" style="display: none;" onsubmit="handleLogin(event)">
-          <h2>Iniciar Sesión</h2>
+          <h2>🦇 Iniciar Sesión</h2>
           <div class="form-group">
             <label>Correo Electrónico</label>
             <input type="email" id="loginEmail" required placeholder="correo@ejemplo.com">
@@ -1085,31 +1095,31 @@
             <label>Contraseña</label>
             <input type="password" id="loginPassword" required placeholder="******">
           </div>
-          <button type="submit" class="btn-submit">Ingresar</button>
+          <button type="submit" class="btn-submit">🔮 Entrar a mi Portal</button>
           <div class="toggle-auth">
-            ¿No tienes cuenta? <span onclick="toggleAuthForms('register')">Regístrate gratis</span>
+            ¿Aún no tienes cuenta? <span onclick="toggleAuthForms('register')">Regístrate gratis</span>
           </div>
         </form>
 
       </div>
 
-      <!-- DASHBOARD CLIENTE -->
+      <!-- DASHBOARD CLIENTE HALLOWEEN -->
       <div class="user-dashboard" id="userDashboard" style="display: none;">
         
-        <!-- RECUADRO DEDICADO A LA PLACA EN LA PARTE SUPERIOR -->
+        <!-- RECUADRO DE PLACA HALLOWEEN -->
         <div class="plate-top-box">
-          <!-- Modo Registro (Placa NO guardada aún) -->
+          <!-- Modo Registro -->
           <div id="plateInputContainer" class="plate-form-container" style="display: none;">
-            <label for="userPlateInput">REGISTRA TU VEHÍCULO:</label>
+            <label for="userPlateInput">👻 REGISTRA LA PLACA DE TU VEHÍCULO:</label>
             <div class="plate-input-wrapper">
               <input type="text" id="userPlateInput" placeholder="ABC123" maxlength="6" oninput="this.value = this.value.toUpperCase().replace(/[^A-Z0-9]/g, '')">
               <button type="button" class="btn-save-plate" onclick="handleSavePlate()">Guardar Placa</button>
             </div>
           </div>
 
-          <!-- Modo Registrado (Placa SOLO LECTURA) -->
+          <!-- Modo Registrado -->
           <div id="plateDisplayContainer" class="plate-registered-badge" style="display: none;">
-            <span class="plate-label">🚗 PLACA:</span>
+            <span class="plate-label">🚗 PLACA REGISTRADA:</span>
             <span id="userPlateDisplay" class="plate-number">------</span>
           </div>
         </div>
@@ -1117,39 +1127,39 @@
         <div class="dashboard-header">
           <div>
             <div class="user-greeting-container">
-              <h2>Bienvenido, <span id="userNameDisplay">Cliente</span> 👋</h2>
+              <h2>🎃 Hola, <span id="userNameDisplay">Cliente</span> 🧙‍♂️</h2>
 
               <a id="vipWhatsappLink" href="#" target="_blank" class="btn-vip-whatsapp" style="display: none;">
-                💬 Soporte VIP WhatsApp
+                💬 Soporte VIP Nocturno
               </a>
             </div>
-            <p style="color: #64748b;">Este es tu espacio exclusivo de beneficios, diagnóstico y ofertas.</p>
+            <p style="color: #d8b4fe;">Espacio exclusivo de beneficios, diagnósticos y auxilio mecánico de Noche de Brujas.</p>
           </div>
-          <button class="btn-logout" onclick="handleLogout()">Cerrar Sesión</button>
+          <button class="btn-logout" onclick="handleLogout()">Salir</button>
         </div>
 
-        <!-- TARJETA VIP -->
+        <!-- TARJETA VIP HALLOWEEN -->
         <div class="reward-card vip-card">
           <div class="reward-header">
-            <span class="reward-icon">⭐</span>
-            <span class="reward-tag">Membresía SN'GAS VIP</span>
+            <span class="reward-icon">🦇</span>
+            <span class="reward-tag">Membresía Nocturna VIP SN'GAS</span>
           </div>
           <div class="reward-body">
             <p id="subscriptionStatusText" class="reward-footer-text">
-              Obtén acceso preferencial a auxilio mecánico nocturno, prioridad en atención de taller y promociones exclusivas.
+              Acceso prioritario a auxilio mecánico nocturno pasadas las 6:00 PM, revisión express de fallas y promociones en este Halloween.
             </p>
-            <button id="btnSubscribe" onclick="handleSubscription()" class="btn-submit" style="background-color: #a855f7; margin-top: 12px;">
-              Solicitar / Renovar Membresía VIP
+            <button id="btnSubscribe" onclick="handleSubscription()" class="btn-submit" style="margin-top: 12px;">
+              🎃 Solicitar / Renovar Membresía VIP
             </button>
           </div>
         </div>
 
-        <!-- RECOMPENSAS (MONEGAS, BENEFICIO EXCLUSIVO Y CERTIFICACIÓN) -->
+        <!-- RECOMPENSAS HALLOWEEN -->
         <div class="rewards-wrapper">
           <div class="reward-card monegas-card">
             <div class="reward-header">
-              <span class="reward-icon">🪙</span>
-              <span class="reward-tag">Mi Saldo Acumulado</span>
+              <span class="reward-icon">🍬</span>
+              <span class="reward-tag">Dulce o Truco - Puntos</span>
             </div>
             <div class="reward-body">
               <div class="reward-inner-box monegas-box">
@@ -1157,7 +1167,7 @@
                 <small>Monegas</small>
               </div>
               <p class="reward-footer-text">
-                Acumula puntos en cada servicio y canjéalos por descuentos en nuestro taller.
+                Acumula puntos embrujados en cada mantenimiento y canjéalos por pociones/descuentos.
               </p>
             </div>
           </div>
@@ -1165,50 +1175,50 @@
           <div class="reward-card gift-card">
             <div class="reward-header">
               <span class="reward-icon">🎁</span>
-              <span class="reward-tag">Tu Beneficio Exclusivo</span>
+              <span class="reward-tag">Tu Beneficio Sorpresa</span>
             </div>
             <div class="reward-body">
               <div class="reward-inner-box gift-box">
-                <span id="userGiftDisplay">Cargando tu beneficio...</span>
+                <span id="userGiftDisplay">Cargando beneficio...</span>
               </div>
               <p class="reward-footer-text">
-                Muestra este recuadro en caja para reclamar tu promoción.
+                Muestra este pase misterioso en caja para reclamar tu premio.
               </p>
             </div>
           </div>
 
           <div class="reward-card cert-card" id="certCard" style="display: none;">
             <div class="reward-header">
-              <span class="reward-icon">📅</span>
-              <span class="reward-tag">Próxima Certificación Anual</span>
+              <span class="reward-icon">📜</span>
+              <span class="reward-tag">Certificación Anual</span>
             </div>
             <div class="reward-body">
               <div class="reward-inner-box cert-box" id="certBox">
                 <span id="userCertDisplay">Sin programar</span>
               </div>
               <p class="reward-footer-text" id="certFooterText">
-                Recuerda renovar tu certificación GNV/GLP antes de esta fecha.
+                Renueva tu inspección a tiempo para evitar sanciones del averno.
               </p>
             </div>
           </div>
         </div>
 
-        <!-- CALCULADORA DE MANTENIMIENTOS POR KILOMETRAJE -->
+        <!-- CALCULADORA DE MANTENIMIENTOS HALLOWEEN -->
         <div class="km-calc-box">
-          <h3>🚗 Calculadora de Mantenimientos</h3>
-          <p>Ingresa el kilometraje actual de tu vehículo y presiona "Calcular" para ver el estado de tus próximos mantenimientos.</p>
+          <h3>🕷️ Calculadora Espectral de Mantenimientos</h3>
+          <p>Ingresa el kilometraje actual de tu vehículo para verificar qué mantenimientos están por vencer o caducados.</p>
           <div class="km-input-row">
             <div class="km-input-group">
-              <label for="kmActualInput">Kilometraje actual</label>
+              <label for="kmActualInput">Kilometraje Actual</label>
               <input type="number" id="kmActualInput" placeholder="Ej. 45000" min="0">
             </div>
-            <button type="button" class="btn-submit btn-calcular" onclick="calcularMantenimientos()">Calcular</button>
+            <button type="button" class="btn-submit btn-calcular" onclick="calcularMantenimientos()">Calcular Estado</button>
           </div>
           <div id="maintenanceGrid" class="maintenance-grid"></div>
 
           <div class="date-maintenance-block">
-            <h4>📅 Certificaciones y Revisiones por Fecha</h4>
-            <p>Estos trámites se controlan por fecha exacta (no por kilometraje).</p>
+            <h4>📅 Revisiones y Trámites por Fecha</h4>
+            <p>Control exacto de expiración por calendario.</p>
             <div id="dateMaintenanceGrid" class="maintenance-grid"></div>
           </div>
         </div>
@@ -1216,20 +1226,20 @@
         <!-- BANNER PROMOCIONAL -->
         <div class="promo-section" id="promoBanner"></div>
 
-        <!-- BÚSQUEDA CÓDIGOS OBD-II -->
+        <!-- BÚSQUEDA CÓDIGOS OBD-II HALLOWEEN -->
         <div class="dtc-section">
           <div class="dtc-header">
-            <h3>🔍 Buscador de Códigos de Falla OBD-II / Check Engine</h3>
-            <p>Ingresa el código que dio el escáner (ejemplo: P0100, P0136, P0171, P0300, P0600, C0110) para conocer su significado, causas y diagnóstico.</p>
+            <h3>🔮 Inspector de Luces Embrujadas (Check Engine / OBD-II)</h3>
+            <p>Escribe el código del escáner (ej: P0100, P0171, P0300, P0600) para revelar qué mal padece tu motor y cómo curarlo.</p>
           </div>
           <div class="dtc-search-box">
             <input type="text" id="dtcInput" placeholder="Escribe el código (ej. P0300)" onkeyup="if(event.key==='Enter') searchErrorCode()">
-            <button onclick="searchErrorCode()">Consultar Código</button>
+            <button onclick="searchErrorCode()">Consultar Hechizo</button>
           </div>
           <div id="dtcResultContainer" style="display: none;"></div>
         </div>
 
-        <h3 class="exclusive-title" style="display: none;">🎁 Productos Exclusivos para Socios</h3>
+        <h3 class="exclusive-title" style="display: none;">🎁 Ofertas Exclusivas</h3>
         <main class="products-grid" id="exclusiveGrid" style="display: none;"></main>
       </div>
 
@@ -1551,7 +1561,7 @@
       const userName = activeUser ? (activeUser.nombre || activeUser.email) : 'Cliente';
       const userPlate = (activeUser && activeUser.placa) ? activeUser.placa : 'No registrada';
 
-      const message = `Hola SN'GAS ONLINE, mi nombre es *${userName}* (Placa: *${userPlate}*). Deseo solicitar / renovar mi *Membresía VIP* para acceder a auxilio mecánico nocturno y beneficios exclusivos.`;
+      const message = `Hola SN'GAS ONLINE 🎃, mi nombre es *${userName}* (Placa: *${userPlate}*). Deseo solicitar / renovar mi *Membresía VIP Nocturna* de Halloween para acceder a auxilio mecánico y promociones.`;
       
       const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(message)}`;
       
@@ -1565,7 +1575,7 @@
       { id: 5, name: 'Reductor / Regulador GLP 5ta Gen', category: ['GLP'], priceText: '', description: 'Regulador de presión de gas GLP para sistemas secuenciales.', image: 'imagen%20de%20productos%20nd.jfif' }
     ];
 
-    // CATÁLOGO COMPLETO DE SERVICIOS (Se removieron GLP, GNV y Gasolina de las categorías)
+    // CATÁLOGO COMPLETO DE SERVICIOS
     const services = [
       { 
         id: 101, 
@@ -1890,17 +1900,15 @@
           if (data) {
             isUserVipActive = data.membresia_activa === true;
 
-            // LÓGICA DE MOSTRAR / REGISTRAR PLACA EN LA PARTE SUPERIOR
+            // LÓGICA DE MOSTRAR / REGISTRAR PLACA
             const inputContainer = document.getElementById('plateInputContainer');
             const displayContainer = document.getElementById('plateDisplayContainer');
 
             if (data.placa && data.placa.trim() !== '') {
-              // Si ya tiene placa guardada: Muestra solo lectura
               document.getElementById('userPlateDisplay').textContent = data.placa.toUpperCase();
               if (inputContainer) inputContainer.style.display = 'none';
               if (displayContainer) displayContainer.style.display = 'inline-flex';
             } else {
-              // Si no tiene placa: Muestra formulario para ingresarla una única vez
               if (inputContainer) inputContainer.style.display = 'flex';
               if (displayContainer) displayContainer.style.display = 'none';
             }
@@ -1909,7 +1917,7 @@
             document.getElementById('userMonegasDisplay').textContent = data.monegas || 0;
             document.getElementById('userGiftDisplay').textContent = data.regalo || '¡Bienvenido!';
 
-            // Guardar datos de kilómetros de la DB para realizar los cálculos
+            // Guardar datos de kilómetros de la DB
             userMaintenanceData = {
               mantenimiento_gas: data.km_ultimo_mantenimiento_gas,
               afinamiento_gasolina: data.km_ultimo_afinamiento_gasolina,
