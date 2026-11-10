@@ -286,9 +286,7 @@
       background-color: #1da851;
     }
 
-    /* ==========================================
-       🎃 ESTILOS HALLOWEEN PARA "MI CUENTA"
-       ========================================== */
+    /* ESTILOS HALLOWEEN PARA "MI CUENTA" */
     #accountSection {
       background: radial-gradient(circle at top, #1a0b2e 0%, #0d0614 100%);
       padding-top: 2rem;
@@ -1246,12 +1244,67 @@
     </div>
   </section>
 
+  <!-- ========================================== -->
+  <!-- INTEGRACIÓN DE FIREBASE SDK (MODULAR V10)   -->
+  <!-- ========================================== -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    import { 
+      getAuth, 
+      createUserWithEmailAndPassword, 
+      signInWithEmailAndPassword, 
+      signOut, 
+      onAuthStateChanged,
+      updateProfile
+    } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+
+    // Configuración oficial de tu proyecto sngasonline-220fe
+    const firebaseConfig = {
+      apiKey: "AIzaSyAIuyorLGceVGmjyHWY_nE39nreipLfRhE",
+      authDomain: "sngasonline-220fe.firebaseapp.com",
+      projectId: "sngasonline-220fe",
+      storageBucket: "sngasonline-220fe.firebasestorage.app",
+      messagingSenderId: "660476722010",
+      appId: "1:660476722010:web:6bcea00acbb590adeb9163",
+      measurementId: "G-WMN8SZ50JQ"
+    };
+
+    // Inicializar Firebase
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+
+    // Exportar al ámbito global para llamarlas desde el HTML
+    window.firebaseAuth = auth;
+    window.firebaseCreateUser = createUserWithEmailAndPassword;
+    window.firebaseSignIn = signInWithEmailAndPassword;
+    window.firebaseSignOut = signOut;
+    window.firebaseUpdateProfile = updateProfile;
+
+    // Listener del estado de sesión en tiempo real de Firebase
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        const localSession = JSON.parse(localStorage.getItem('sngas_active_session')) || {};
+        const activeUser = {
+          id: user.uid,
+          nombre: user.displayName || localSession.nombre || user.email.split('@')[0],
+          email: user.email,
+          telefono: localSession.telefono || '',
+          placa: localSession.placa || ''
+        };
+        localStorage.setItem('sngas_active_session', JSON.stringify(activeUser));
+      } else {
+        localStorage.removeItem('sngas_active_session');
+      }
+      checkUserSession();
+    });
+  </script>
+
   <!-- Librería de Supabase -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
   <script>
     // ==========================================
-    // 1. CONFIGURACIÓN DE SUPABASE Y NÚMERO DE WHATSAPP
+    // CONFIGURACIÓN DE SUPABASE Y NÚMERO DE WHATSAPP
     // ==========================================
     const SUPABASE_URL = 'https://pcpcbdraksmlobfrhrpk.supabase.co';
     const SUPABASE_KEY = 'sb_publishable_atbLcWJhwhFwPC5JCS8qmA_YIRmRUas';
@@ -1698,46 +1751,83 @@
       document.getElementById('loginForm').style.display = mode === 'login' ? 'block' : 'none';
     }
 
+    // ==========================================
+    // LÓGICA DE MANEJO DE SESIÓN CON FIREBASE
+    // ==========================================
     async function handleRegister(e) {
       e.preventDefault();
-      if (!supabaseClient) return alert("Supabase no está conectado");
+      if (!window.firebaseAuth) return alert("Firebase aún no se ha cargado correctamente.");
+
       const email = document.getElementById('regEmail').value.trim().toLowerCase();
       const password = document.getElementById('regPassword').value.trim();
       const name = document.getElementById('regName').value.trim();
       const phone = document.getElementById('regPhone').value.trim();
 
-      const { data, error } = await supabaseClient
-        .from('usuarios')
-        .insert([{ nombre: name, email, telefono: phone, password }])
-        .select();
+      try {
+        // 1. Crear usuario en Firebase Auth
+        const userCredential = await window.firebaseCreateUser(window.firebaseAuth, email, password);
+        const user = userCredential.user;
 
-      if (error) return alert('Error: ' + error.message);
-      localStorage.setItem('sngas_active_session', JSON.stringify(data[0]));
-      checkUserSession();
+        // 2. Asignar el nombre visible
+        await window.firebaseUpdateProfile(user, { displayName: name });
+
+        // 3. Guardar en localStorage
+        const userData = {
+          id: user.uid,
+          nombre: name,
+          email: email,
+          telefono: phone,
+          placa: ''
+        };
+        localStorage.setItem('sngas_active_session', JSON.stringify(userData));
+
+        // 4. Guardar respaldo en Supabase si está disponible
+        if (supabaseClient) {
+          await supabaseClient.from('usuarios').insert([{
+            id: user.uid,
+            nombre: name,
+            email: email,
+            telefono: phone
+          }]);
+        }
+
+        alert("¡Registro exitoso! Bienvenido a la Cripta VIP.");
+        checkUserSession();
+
+      } catch (error) {
+        alert("Error en el registro: " + error.message);
+      }
     }
 
     async function handleLogin(e) {
       e.preventDefault();
-      if (!supabaseClient) return alert("Supabase no está conectado");
+      if (!window.firebaseAuth) return alert("Firebase aún no se ha cargado correctamente.");
+
       const email = document.getElementById('loginEmail').value.trim().toLowerCase();
       const pass = document.getElementById('loginPassword').value.trim();
 
-      const { data, error } = await supabaseClient
-        .from('usuarios')
-        .select('*')
-        .eq('email', email)
-        .eq('password', pass)
-        .maybeSingle();
+      try {
+        const userCredential = await window.firebaseSignIn(window.firebaseAuth, email, pass);
+        const user = userCredential.user;
 
-      if (data) {
-        localStorage.setItem('sngas_active_session', JSON.stringify(data));
+        const userData = {
+          id: user.uid,
+          nombre: user.displayName || user.email,
+          email: user.email
+        };
+
+        localStorage.setItem('sngas_active_session', JSON.stringify(userData));
         checkUserSession();
-      } else {
-        alert('Datos incorrectos.');
+
+      } catch (error) {
+        alert("Error al ingresar: Verifique su correo o contraseña. (" + error.message + ")");
       }
     }
 
-    function handleLogout() {
+    async function handleLogout() {
+      if (window.firebaseAuth) {
+        await window.firebaseSignOut(window.firebaseAuth);
+      }
       localStorage.removeItem('sngas_active_session');
       checkUserSession();
     }
@@ -1746,7 +1836,7 @@
     async function handleSavePlate() {
       const activeUser = JSON.parse(localStorage.getItem('sngas_active_session'));
       const inputEl = document.getElementById('userPlateInput');
-      if (!inputEl || !activeUser || !supabaseClient) return;
+      if (!inputEl || !activeUser) return;
 
       const placaVal = inputEl.value.trim().toUpperCase();
 
@@ -1758,21 +1848,15 @@
       
       if (!confirmacion) return;
 
-      const { data, error } = await supabaseClient
-        .from('usuarios')
-        .update({ placa: placaVal })
-        .eq('id', activeUser.id)
-        .select();
+      activeUser.placa = placaVal;
+      localStorage.setItem('sngas_active_session', JSON.stringify(activeUser));
 
-      if (error) {
-        alert("Ocurrió un error al guardar la placa: " + error.message);
-      } else {
-        alert("¡Placa registrada con éxito!");
-        if (data && data[0]) {
-          localStorage.setItem('sngas_active_session', JSON.stringify(data[0]));
-        }
-        checkUserSession();
+      if (supabaseClient && activeUser.id) {
+        await supabaseClient.from('usuarios').update({ placa: placaVal }).eq('id', activeUser.id);
       }
+
+      alert("¡Placa registrada con éxito!");
+      checkUserSession();
     }
 
     function formatCertDate(rawDate) {
@@ -1831,8 +1915,14 @@
 
     async function saveKmActual(kmActual) {
       const activeUser = JSON.parse(localStorage.getItem('sngas_active_session'));
-      if (!supabaseClient || !activeUser) return;
-      await supabaseClient.from('usuarios').update({ km_actual: kmActual }).eq('id', activeUser.id);
+      if (!activeUser) return;
+      
+      activeUser.km_actual = kmActual;
+      localStorage.setItem('sngas_active_session', JSON.stringify(activeUser));
+
+      if (supabaseClient && activeUser.id) {
+        await supabaseClient.from('usuarios').update({ km_actual: kmActual }).eq('id', activeUser.id);
+      }
     }
 
     function renderDateMaintenanceCards() {
@@ -1878,7 +1968,7 @@
       }).join('');
     }
 
-    // CONSULTA Y ACTUALIZACIÓN DESDE SUPABASE EN TIEMPO REAL
+    // CONSULTA Y ACTUALIZACIÓN EN TIEMPO REAL
     async function checkUserSession() {
       const activeUser = JSON.parse(localStorage.getItem('sngas_active_session'));
       const authBox = document.getElementById('authBox');
@@ -1890,8 +1980,26 @@
 
         document.getElementById('userNameDisplay').textContent = activeUser.nombre || activeUser.email;
 
+        // Mostrar u ocultar el recuadro de la placa según el estado del cliente
+        const inputContainer = document.getElementById('plateInputContainer');
+        const displayContainer = document.getElementById('plateDisplayContainer');
+
+        if (activeUser.placa && activeUser.placa.trim() !== '') {
+          document.getElementById('userPlateDisplay').textContent = activeUser.placa.toUpperCase();
+          if (inputContainer) inputContainer.style.display = 'none';
+          if (displayContainer) displayContainer.style.display = 'inline-flex';
+        } else {
+          if (inputContainer) inputContainer.style.display = 'flex';
+          if (displayContainer) displayContainer.style.display = 'none';
+        }
+
+        // Puntos / Monegas por defecto
+        document.getElementById('userMonegasDisplay').textContent = activeUser.monegas || 0;
+        document.getElementById('userGiftDisplay').textContent = activeUser.regalo || '¡Bienvenido!';
+
+        // Cargar datos adicionales desde Supabase (si está configurado)
         if (supabaseClient && activeUser.id) {
-          const { data, error } = await supabaseClient
+          const { data } = await supabaseClient
             .from('usuarios')
             .select('*')
             .eq('id', activeUser.id)
@@ -1900,24 +2008,15 @@
           if (data) {
             isUserVipActive = data.membresia_activa === true;
 
-            // LÓGICA DE MOSTRAR / REGISTRAR PLACA
-            const inputContainer = document.getElementById('plateInputContainer');
-            const displayContainer = document.getElementById('plateDisplayContainer');
-
             if (data.placa && data.placa.trim() !== '') {
               document.getElementById('userPlateDisplay').textContent = data.placa.toUpperCase();
               if (inputContainer) inputContainer.style.display = 'none';
               if (displayContainer) displayContainer.style.display = 'inline-flex';
-            } else {
-              if (inputContainer) inputContainer.style.display = 'flex';
-              if (displayContainer) displayContainer.style.display = 'none';
             }
 
-            // Puntos / Monegas
             document.getElementById('userMonegasDisplay').textContent = data.monegas || 0;
             document.getElementById('userGiftDisplay').textContent = data.regalo || '¡Bienvenido!';
 
-            // Guardar datos de kilómetros de la DB
             userMaintenanceData = {
               mantenimiento_gas: data.km_ultimo_mantenimiento_gas,
               afinamiento_gasolina: data.km_ultimo_afinamiento_gasolina,
@@ -1927,7 +2026,6 @@
               cambio_bujias: data.km_ultimo_cambio_bujias
             };
 
-            // Guardar fechas de trámites
             userDateMaintenanceData = {
               certificacion_gas: data.fecha_certificacion_gas || data.proxima_certificacion,
               revision_quinquenal: data.fecha_revision_quinquenal
